@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRIFT KING — дрифт игра</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:#0a0d12;font-family:'Segoe UI',sans-serif;user-select:none}
+  #gameCanvas{display:block;width:100%;height:100%}
+
+  #menu,#dead{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#10141d 0%,#07080c 70%);color:#e8ecf5;text-align:center;padding:20px}
+  #dead{display:none}
+  .logo{font-size:clamp(36px,8vw,78px);font-weight:900;letter-spacing:5px;background:linear-gradient(90deg,#ff8a00,#ff3d5a);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px}
+  .sub{color:#8ea0bb;font-size:15px;margin-bottom:24px;max-width:540px;line-height:1.6}
+  .btn{pointer-events:auto;cursor:pointer;background:linear-gradient(90deg,#ff8a00,#ff3d5a);border:none;color:#10090b;font-weight:900;font-size:18px;letter-spacing:1px;padding:16px 48px;border-radius:12px;box-shadow:0 8px 30px rgba(255,90,40,.35);transition:.2s;text-transform:uppercase}
+  .btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 14px 40px rgba(255,61,90,.5)}
+  .hint{color:#6d7f9a;font-size:13px;margin-top:22px;line-height:2;max-width:460px}
+  .hint b{color:#ffd54f}
+  #howto{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:18px 0;font-size:13px}
+  .key{background:#1a2130;border:1px solid #313c53;border-radius:8px;padding:6px 12px;font-weight:700}
+  .big-num{font-size:56px;font-weight:900;color:#ff8a00;margin:10px 0}
+  #best{color:#9fb0c7;font-size:14px;margin-top:10px}
+
+  #hud{position:fixed;inset:0;pointer-events:none;z-index:10;display:none}
+  #score{position:absolute;top:18px;left:50%;transform:translateX(-50%);text-align:center;font-size:34px;font-weight:900;color:#ffd54f;text-shadow:0 2px 10px rgba(0,0,0,.9)}
+  #score small{display:block;font-size:12px;color:#9fb0c7;font-weight:400}
+  #mult{position:absolute;top:76px;left:50%;transform:translateX(-50%);font-size:20px;font-weight:900;color:#ff8a00;text-shadow:0 2px 8px rgba(0,0,0,.9);opacity:0}
+  #hud-right{position:absolute;right:24px;top:18px;text-align:right;font-size:24px;font-weight:800;color:#e8ecf5;text-shadow:0 2px 6px rgba(0,0,0,.8)}
+  #hud-right small{display:block;font-size:12px;color:#9fb0c7;font-weight:400}
+  #timer{position:absolute;left:24px;top:18px;font-size:26px;font-weight:800;color:#e8ecf5;text-shadow:0 2px 6px rgba(0,0,0,.8)}
+  #drift-msg{position:absolute;top:34%;left:50%;transform:translate(-50%,-50%);font-size:34px;font-weight:900;letter-spacing:4px;opacity:0;color:#ffd54f;text-shadow:0 0 30px rgba(255,213,79,.6)}
+  #dmg{position:absolute;inset:0;box-shadow:inset 0 0 140px 60px rgba(120,240,255,.25);opacity:0}
+</style>
+</head>
+<body>
+
+<div id="menu">
+  <div class="logo">DRIFT KING</div>
+  <div class="sub">60 секунд чистого дрифта! Чем сильнее занос и выше скорость — тем больше очков. Держи комбо умножением и проезжай через оранжевые ворота для бонуса.</div>
+  <div id="howto">
+    <span class="key">W / ↑ — газ</span>
+    <span class="key">S / ↓ — тормоз</span>
+    <span class="key">A D — руль</span>
+    <span class="key">SPACE — ручник (дрифт)</span>
+  </div>
+  <button class="btn" onclick="startGame()">ПОЕХАЛИ</button>
+  <div class="hint">Как дрифтить: на скорости жми <b>SPACE</b> + поворачивай руль — задние колёса срываются в занос.<br>Чем дольше держишь угол заноса — тем выше множитель (до ×5).</div>
+  <div id="best">Рекорд: 0</div>
+</div>
+
+<div id="dead">
+  <div>ВРЕМЯ ВЫШЛО!</div>
+  <div class="big-num" id="dead-score">0</div>
+  <div id="dead-best" style="color:#8ea0bb;margin-bottom:26px">Рекорд: 0</div>
+  <button class="btn" onclick="restartGame()">ЕЩЁ РАЗ</button>
+</div>
+
+<div id="hud">
+  <div id="dmg"></div>
+  <div id="score">0<small>ОЧКИ</small></div>
+  <div id="mult">×1</div>
+  <div id="timer">60</div>
+  <div id="drift-msg">ДРИФТ!</div>
+  <div id="hud-right"><div id="hud-speed">0</div><small>КМ/Ч</small></div>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script src="three.min.js"></script>
+<script>
+const canvas=document.getElementById('gameCanvas');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x0d1220);
+scene.fog=new THREE.Fog(0x0d1220,120,300);
+const camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.1,600);
+
+const hemi=new THREE.HemisphereLight(0xbdd0ff,0x33261a,.95);scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xfff1d0,1.15);sun.position.set(40,80,30);sun.castShadow=true;
+sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=sun.shadow.camera.bottom=-100;sun.shadow.camera.right=sun.shadow.camera.top=100;sun.shadow.camera.far=350;
+scene.add(sun);
+
+function gridTexture(){const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');
+  g.fillStyle='#11161f';g.fillRect(0,0,256,256);g.strokeStyle='#1c2433';g.lineWidth=3;
+  for(let i=0;i<=256;i+=32){g.beginPath();g.moveTo(i,0);g.lineTo(i,256);g.stroke();g.beginPath();g.moveTo(0,i);g.lineTo(256,i);g.stroke();}
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(24,24);return t;}
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(320,320),new THREE.MeshStandardMaterial({map:gridTexture(),roughness:.96}));
+ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+
+// Arena circle wall
+const RING=95;
+const ring=new THREE.Mesh(new THREE.RingGeometry(RING-1.2,RING+1.2,64).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:0x2a3550,side:THREE.DoubleSide}));
+ring.position.y=.08;scene.add(ring);
+const ringWall=new THREE.Mesh(new THREE.CylinderGeometry(RING+1,RING+1,3,64,1,true),new THREE.MeshStandardMaterial({color:0x1c2331,roughness:.9,side:THREE.BackSide}));
+ringWall.position.y=1.5;scene.add(ringWall);
+
+// Gates (bonus rings)
+const gates=[];
+[[0,0,-60],[50,0,30],[-45,0,40],[10,0,70]].forEach(([x,y,z],i)=>{
+  const g=new THREE.Group();
+  const mat=new THREE.MeshBasicMaterial({color:0xff8a00,transparent:true,opacity:.5});
+  const poleL=new THREE.Mesh(new THREE.BoxGeometry(.8,8,.8),mat);poleL.position.set(-7,4,0);
+  const poleR=poleL.clone();poleR.position.x=7;
+  const bar=new THREE.Mesh(new THREE.BoxGeometry(15,.8,.8),mat);bar.position.set(0,8,0);
+  g.add(poleL,poleR,bar);
+  g.position.set(x,y,z);scene.add(g);
+  gates.push({mesh:g,used:false});
+});
+
+// Car
+function buildCar(color){
+  const g=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.BoxGeometry(1.7,.5,3.4),new THREE.MeshStandardMaterial({color,metalness:.8,roughness:.3}));
+  body.position.y=.5;body.castShadow=true;
+  const cab=new THREE.Mesh(new THREE.BoxGeometry(1.4,.48,1.5),new THREE.MeshStandardMaterial({color:new THREE.Color(color).multiplyScalar(.72),metalness:.7,roughness:.4}));
+  cab.position.set(0,.92,.1);cab.castShadow=true;
+  const spoiler=new THREE.Mesh(new THREE.BoxGeometry(1.5,.07,.4),body.material);spoiler.position.set(0,.9,-1.62);
+  const wheelGeo=new THREE.CylinderGeometry(.32,.32,.22,14);wheelGeo.rotateZ(Math.PI/2);
+  const wheelMat=new THREE.MeshStandardMaterial({color:0x14161c,roughness:.9});
+  const wheels=[];
+  [[-.85,1.25],[.85,1.25],[-.85,-1.25],[.85,-1.25]].forEach(([x,z])=>{const w=new THREE.Mesh(wheelGeo,wheelMat);w.position.set(x,.32,z);g.add(w);wheels.push(w);});
+  g.add(body,cab,spoiler);
+  return {g,wheels,body,cab};
+}
+const car=buildCar(0x00d0ff);
+car.g.position.set(0,0,30);scene.add(car.g);
+
+// Drift physics
+const CAR={vx:0,vz:0,angle:-Math.PI/2,speed:0,hp:100,maxSpeed:34,accel:22,drag:1.35,grip:5.5,lowGrip:.55,steer:2.6};
+
+// HUD
+const hudEl=document.getElementById('hud');
+const scoreEl=document.getElementById('score'),multEl=document.getElementById('mult'),timerEl=document.getElementById('timer'),
+      speedEl=document.getElementById('hud-speed'),driftMsg=document.getElementById('drift-msg'),dmgEl=document.getElementById('dmg');
+let score=0,mult=1,driftTime=0,noDriftTime=0,timeLeft=60,best=+(localStorage.getItem('driftBest')||0);
+document.getElementById('best').textContent='Рекорд: '+best;
+let state='menu',running=false;
+let actx;function sfx(f,d,ty,v,s){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();
+  const o=actx.createOscillator(),g=actx.createGain();o.type=ty||'sawtooth';
+  o.frequency.setValueAtTime(f,actx.currentTime);if(s)o.frequency.exponentialRampToValueAtTime(s,actx.currentTime+d);
+  g.gain.setValueAtTime(v||.1,actx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);
+  o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+d);}catch(e){}}
+const keys={};
+addEventListener('keydown',e=>keys[e.code]=true);
+addEventListener('keyup',e=>keys[e.code]=false);
+
+// Skid marks pool
+const marks=[];
+const markMat=new THREE.MeshBasicMaterial({color:0x0a0c10,transparent:true,opacity:.55,depthWrite:false});
+const markGeo=new THREE.PlaneGeometry(.32,.6);
+function addMark(x,z,rot){const m=new THREE.Mesh(markGeo,markMat.clone());
+  m.rotation.set(-Math.PI/2,0,rot);m.position.set(x,.05,z);scene.add(m);marks.push({m,life:6});}
+function updateMarks(dt){for(let i=marks.length-1;i>=0;i--){const mk=marks[i];
+  mk.life-=dt;mk.m.material.opacity=.55*(mk.life/6);
+  if(mk.life<=0){scene.remove(mk.m);mk.m.material.dispose();marks.splice(i,1);}}}
+
+// Smoke particles
+const puffs=[];
+const puffTex=makePuffTex();
+function makePuffTex(){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');
+  const gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(230,230,235,1)');gr.addColorStop(1,'rgba(230,230,235,0)');
+  g.fillStyle=gr;g.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);}
+function addPuff(x,z,y){const m=new THREE.Sprite(new THREE.SpriteMaterial({map:puffTex,transparent:true,opacity:.55,depthWrite:false}));
+  m.position.set(x,y,z);m.scale.setScalar(1.2);scene.add(m);puffs.push({m,life:1.4});}
+function updatePuffs(dt){for(let i=puffs.length-1;i>=0;i--){const p=puffs[i];
+  p.life-=dt;const t=1-p.life/1.4;p.m.scale.setScalar(1.2+t*2.6);p.m.material.opacity=.55*(p.life/1.4);
+  if(p.life<=0){scene.remove(p.m);puffs.splice(i,1);}}}
+
+function updateHud(){scoreEl.innerHTML=Math.round(score)+'<small>ОЧКИ</small>';
+  speedEl.textContent=Math.round(Math.hypot(CAR.vx,CAR.vz)*7.2);
+  timerEl.textContent=Math.ceil(timeLeft);}
+function driftMath(){
+  const sp=Math.hypot(CAR.vx,CAR.vz);
+  if(sp>11){
+    const fw={x:Math.sin(CAR.angle),z:Math.cos(CAR.angle)};
+    const dot=CAR.vx*fw.x+CAR.vz*fw.z;const len=sp||.001;
+    let slip=Math.acos(Math.max(-1,Math.min(1,dot/len)));
+    return {sp,slip};
+  }
+  return {sp:0,slip:0};
+}
+
+function resetRun(){
+  CAR.vx=0;CAR.vz=0;CAR.angle=Math.PI/2;CAR.speed=0;
+  car.g.position.set(0,0,30);car.g.rotation.y=CAR.angle;
+  score=0;mult=1;driftTime=0;noDriftTime=0;timeLeft=60;
+  gates.forEach(g=>{g.used=false;g.mesh.visible=true;});
+  marks.forEach(m=>{scene.remove(m.m);m.m.material.dispose();});marks.length=0;
+  puffs.forEach(p=>scene.remove(p.m));puffs.length=0;
+  updateHud();multEl.style.opacity=0;driftMsg.style.opacity=0;
+  state='play';running=true;
+}
+function startGame(){document.getElementById('menu').style.display='none';resetRun();}
+function restartGame(){document.getElementById('dead').style.display='none';resetRun();}
+function endRun(){
+  running=false;state='dead';
+  const final=Math.round(score);
+  if(final>best){best=final;localStorage.setItem('driftBest',best);}
+  document.getElementById('dead-score').textContent=final;
+  document.getElementById('dead-best').textContent='Рекорд: '+best+(final>=best?' 🏆':'');
+  document.getElementById('dead').style.display='flex';
+  sfx(120,.6,'sawtooth',.2,50);
+}
+
+function drive(dt){
+  const gas=keys.KeyW||keys.ArrowUp,back=keys.KeyS||keys.ArrowDown;
+  const left=keys.KeyA||keys.ArrowLeft,right=keys.KeyD||keys.ArrowRight;
+  const hb=keys.Space;
+  const fw={x:Math.sin(CAR.angle),z:Math.cos(CAR.angle)};
+  const sp=Math.hypot(CAR.vx,CAR.vz);
+  // throttle
+  if(gas){CAR.vx+=fw.x*CAR.accel*dt;CAR.vz+=fw.z*CAR.accel*dt;}
+  if(back){CAR.vx-=fw.x*CAR.accel*1.4*dt;CAR.vz-=fw.z*CAR.accel*1.4*dt;}
+  // drag
+  const drag=Math.exp(-CAR.drag*dt);
+  CAR.vx*=drag;CAR.vz*=drag;
+  // cap
+  let sp2=Math.hypot(CAR.vx,CAR.vz);
+  if(sp2>CAR.maxSpeed){const k=CAR.maxSpeed/sp2;CAR.vx*=k;CAR.vz*=k;sp2=CAR.maxSpeed;}
+  // steering
+  const steer=(right-left)*(hb?1.35:1);
+  CAR.angle+=steer*CAR.steer*dt*(0.4+Math.min(1,sp/CAR.maxSpeed)*.6);
+  // grip: damp lateral velocity
+  const dot=CAR.vx*fw.x+CAR.vz*fw.z;
+  const latX=CAR.vx-fw.x*dot,latZ=CAR.vz-fw.z*dot;
+  const grip=hb?CAR.lowGrip:CAR.grip;
+  const f=Math.exp(-grip*dt);
+  CAR.vx-=latX*(1-f);CAR.vz-=latZ*(1-f);
+  // position
+  car.g.position.x+=CAR.vx*dt;car.g.position.z+=CAR.vz*dt;
+  // arena bound
+  const rad=Math.hypot(car.g.position.x,car.g.position.z);
+  if(rad>RING-2){const k=(RING-2)/rad;car.g.position.x*=k;car.g.position.z*=k;
+    const ns=CAR.vx*(car.g.position.x/rad)+CAR.vz*(car.g.position.z/rad);
+    if(ns>0){CAR.vx-=car.g.position.x/rad*ns*2;CAR.vz-=car.g.position.z/rad*ns*2;}}
+  car.g.rotation.y=CAR.angle;
+  // visual tilt
+  const slip3=driftMath().slip;
+  car.g.rotation.z=-steer*.05-slip3*.12;
+  car.g.rotation.x=-sp*.002;
+  // wheels spin
+  const spin=sp*dt*3.6/Math.max(.32,1);
+  car.wheels.forEach(w=>w.rotation.x+=spin);
+
+  // DRIFT SCORE
+  const d=driftMath();
+  let drifting=false;
+  if(d.sp>11&&d.slip>0.35){
+    drifting=true;
+    // skidmarks at rear wheels
+    const fwx={x:Math.sin(CAR.angle),z:Math.cos(CAR.angle)};
+    const lx=-fwx.z, lz=fwx.x;
+    const rx=car.g.position.x+lx*1.6,frz=car.g.position.z+lz*1.6;
+    const cir=car.g.position.x-lx*1.6,clz=car.g.position.z-lz*1.6;
+    addMark(rx+lx*.1,frz+lz*.1,CAR.angle);
+    addMark(cir-lx*.1,clz-lz*.1,CAR.angle);
+    if(Math.random()<.5){addPuff(rx*1,0.5,frz);addPuff(cir*1,0.5,clz);}
+    // score
+    const gain=d.sp*d.slip*mult*1.1;
+    score+=gain*dt;
+    driftTime+=dt;noDriftTime=0;
+    mult=Math.min(5,1+Math.floor(driftTime/2.2));
+    multEl.textContent='×'+mult;multEl.style.opacity=1;
+    driftMsg.style.opacity=1;
+    if(Math.random()<.01&&mult>=3)sfx(400,.2,'square',.12,800);
+    dmgEl.style.opacity=Math.min(.7,d.slip/1.2);
+  } else {
+    noDriftTime+=dt;driftTime=0;
+    driftMsg.style.opacity=0;dmgEl.style.opacity=0;
+    if(noDriftTime>1.2){mult=1;multEl.style.opacity=.4;}
+  }
+  // gates bonus
+  for(const g of gates){if(g.used)continue;
+    const dg=Math.hypot(car.g.position.x-g.mesh.position.x,car.g.position.z-g.mesh.position.z);
+    if(dg<9){g.used=true;g.mesh.visible=false;score+=1000*mult;mult=Math.min(5,mult+1);
+      sfx(700,.2,'square',.16,1200);multEl.textContent='×'+mult;multEl.style.opacity=1;
+      setTimeout(()=>driftMsg.style.opacity=0,100);}
+  }
+  updateHud();
+}
+
+const camPos=new THREE.Vector3(0,7,-14);
+function updateCamera(dt){
+  const fwv={x:Math.sin(CAR.angle),z:Math.cos(CAR.angle)};
+  const sp=Math.hypot(CAR.vx,CAR.vz);
+  const dist=-11.5-sp*.1,height=5.5+sp*.06;
+  const tx=car.g.position.x-fwv.x*dist, tz=car.g.position.z-fwv.z*dist;
+  const k=Math.min(1,dt*4.5);
+  camPos.x+=(tx-camPos.x)*k;camPos.y+=(height-camPos.y)*k;camPos.z+=(tz-camPos.z)*k;
+  camera.position.copy(camPos);
+  camera.lookAt(car.g.position.x,2,car.g.position.z);
+}
+function updateTimer(dt){
+  if(!running)return;
+  timeLeft-=dt;
+  if(timeLeft<=0){timeLeft=0;updateHud();endRun();sfx(120,.6,'sawtooth',.2,50);}
+}
+
+let last=performance.now();
+function loop(now){requestAnimationFrame(loop);
+  const dt=Math.min(.05,(now-last)/1000);last=now;
+  if(state==='play'&&running){drive(dt);updateTimer(dt);}
+  updateMarks(dt);updatePuffs(dt);updateCamera(dt);
+  renderer.render(scene,camera);
+}
+renderer.setSize(innerWidth,innerHeight);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

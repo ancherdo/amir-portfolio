@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Шашки — Амир</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+    background:radial-gradient(ellipse at center,#14201f 0%,#070a0c 70%);font-family:'Segoe UI',sans-serif;color:#e8ecf5;padding:20px}
+  h1{font-weight:900;letter-spacing:2px;font-size:clamp(22px,4vw,32px);background:linear-gradient(90deg,#ffb300,#ff5252);-webkit-background-clip:text;background-clip:text;color:transparent}
+  #info{display:flex;align-items:center;gap:14px;font-size:15px;font-weight:600;min-height:24px}
+  .turn-dot{width:16px;height:16px;border-radius:50%;display:inline-block;box-shadow:0 0 12px currentColor}
+  #board{display:grid;grid-template-columns:repeat(8,var(--sq));grid-template-rows:repeat(8,var(--sq));--sq:min(9vh,60px);
+    background:#0e1418;padding:10px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.08)}
+  .sq{--sq:min(9vh,60px);width:var(--sq);height:var(--sq);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+  .sq.light{background:#7e4a24}
+  .sq.dark{background:#2a1408}
+  .sq.dark.hover::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.08);pointer-events:none}
+  .piece{width:78%;height:78%;border-radius:50%;position:relative;transition:transform .15s;pointer-events:none}
+  .piece::after{content:'';position:absolute;inset:-7%;border-radius:50%;border:3px solid rgba(255,255,255,.35)}
+  .piece.w{background:radial-gradient(circle at 32% 30%,#ffffff,#cfd3dd 45%,#8b8f9c);box-shadow:0 4px 10px rgba(0,0,0,.5)}
+  .piece.w::after{border-color:rgba(40,50,66,.5)}
+  .piece.b{background:radial-gradient(circle at 32% 30%,#4a4f5c,#1c1f27 45%,#000);box-shadow:0 4px 10px rgba(0,0,0,.6)}
+  .piece.b::after{border-color:rgba(255,255,255,.45)}
+  .piece.king::before{content:'♛';position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);font-size:calc(var(--sq)*.38);color:#ffd54f;text-shadow:0 0 8px rgba(255,213,79,.6);z-index:2}
+  .piece.selected{transform:scale(1.12);box-shadow:0 0 0 4px #ffd54f,0 8px 16px rgba(0,0,0,.6)}
+  .piece.captured{animation:pop .3s forwards;pointer-events:none}
+  @keyframes pop{to{transform:scale(0);opacity:0}}
+  .dot{width:30%;height:30%;border-radius:50%;background:rgba(60,220,120,.55);box-shadow:0 0 12px rgba(60,220,120,.5);animation:pulse 1s infinite}
+  @keyframes pulse{50%{transform:scale(1.25)}}
+  .dot.cap{background:rgba(255,80,60,.85);box-shadow:0 0 14px rgba(255,80,60,.7)}
+  .btn{cursor:pointer;background:linear-gradient(90deg,#ffb300,#ff5252);border:none;color:#0a0d12;font-weight:900;font-size:15px;
+    padding:12px 34px;border-radius:10px;box-shadow:0 6px 22px rgba(255,120,40,.35);transition:.2s;text-transform:uppercase;letter-spacing:1px}
+  .btn:hover{transform:translateY(-2px)}
+  #msg{font-size:14px;color:#9fb0c7;min-height:20px}
+</style>
+</head>
+<body>
+<h1>ШАШКИ</h1>
+<div id="info"><span class="turn-dot" id="turnDot"></span><span id="turnText">Ход: Чёрные</span></div>
+<div id="msg">У чёрных обязательный бой при наличии взятия</div>
+<div id="board"></div>
+<button class="btn" onclick="initGame()">НОВАЯ ИГРА</button>
+
+<script>
+const boardEl=document.getElementById('board');
+const turnDot=document.getElementById('turnDot'),turnText=document.getElementById('turnText'),msg=document.getElementById('msg');
+let board,M; // M = {cur:'b', sel:null, moves:[], chainPiece:null, counts:{b:12,w:12}}
+const dirs=[[1,1],[1,-1],[-1,1],[-1,-1]];
+let actx;function sfx(f,d,ty,v,s){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();
+  o.type=ty||'square';o.frequency.setValueAtTime(f,actx.currentTime);if(s)o.frequency.exponentialRampToValueAtTime(s,actx.currentTime+d);
+  g.gain.setValueAtTime(v||.1,actx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);
+  o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+d);}catch(e){}}
+function initGame(){
+  board=Array.from({length:8},()=>Array(8).fill(null));
+  for(let r=0;r<3;r++)for(let c=(r%2||0);c<8;c+=2)board[r][c]={p:'b',k:false,id:(r*8+c)};
+  for(let r=5;r<8;r++)for(let c=(r%2||0);c<8;c+=2)board[r][c]={p:'w',k:false,id:(r*8+c)};
+  M={cur:'b',sel:null,moves:[],chain:null,counts:{b:12,w:12}};
+  turnDot.style.color='#000';turnText.textContent='Ход: Чёрные';msg.textContent='';
+  render();
+}
+function inB(r,c){return r>=0&&r<8&&c>=0&&c<8;}
+function opp(p){return p==='b'?'w':'b';}
+function hasAnyCapture(p){
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){const pie=board[r][c];if(pie&&pie.p===p&&captureSteps(r,c,pie.k).length)return true;}
+  return false;
+}
+// single capture steps for piece at r,c (king slides)
+function captureSteps(r,c,isKing){
+  const res=[];
+  if(!isKing){
+    for(const[dr,dc]of dirs){const er=r+dr,ec=c+dc,tr=r+2*dr,tc=c+2*dc;
+      if(inB(er,ec)&&board[er][ec]&&board[er][ec].p!==board[r][c].p&&inB(tr,tc)&&!board[tr][tc])res.push({r:tr,c:tc,er,ec});
+    }
+    return res;
+  }
+  for(const[dr,dc]of dirs){let r0=r+dr,c0=c+dc,er=r,ec=c;
+    while(inB(r0,c0)&&!board[r0][c0]){r0+=dr;c0+=dc;}
+    if(inB(r0,c0)&&board[r0][c0]&&board[r0][c0].p!==board[r][c].p){er=r0;ec=c0;r0+=dr;c0+=dc;
+      while(inB(r0,c0)&&!board[r0][c0]){res.push({r:r0,c:c0,er,ec});r0+=dr;c0+=dc;}}
+  }
+  return res;
+}
+// simple moves
+function simpleMoves(r,c,isKing){
+  const res=[];const fw=board[r][c].p==='b'?1:-1;
+  if(!isKing){for(const dc of[-1,1]){const tr=r+fw,tc=c+dc;if(inB(tr,tc)&&!board[tr][tc])res.push({r:tr,c:tc});}return res;}
+  for(const[dr,dc]of dirs){let tr=r+dr,tc=c+dc;while(inB(tr,tc)&&!board[tr][tc]){res.push({r:tr,c:tc});tr+=dr;tc+=dc;}}
+  return res;
+}
+function legalFor(r,c){
+  const pie=board[r][c];if(!pie||pie.p!==M.cur)return[];
+  if(M.chain&&!(M.chain.r===r&&M.chain.c===c))return[];
+  const caps=captureSteps(r,c,pie.k);
+  if(caps.length)return caps;
+  if(M.chain)return[];
+  if(hasAnyCapture(M.cur))return[];
+  return simpleMoves(r,c,pie.k);
+}
+function aiPicks(){
+  const cap=[];const sim=[];
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){const pie=board[r][c];if(pie&&pie.p===M.cur){
+    if(captureSteps(r,c,pie.k).length)cap.push({r,c});else if(!hasAnyCapture(M.cur))sim.push({r,c});}}
+  return cap.length?cap:sim[0]?sim:[];
+}
+function tryMove(r,c){
+  const m=M.moves.find(x=>x.r===r&&x.c===c);
+  if(!m){ if(M.chain) return; M.sel=null;M.moves=[];render();return; }
+  const pie=board[M.sel.r][M.sel.c];
+  if(m.er!=null){ // capture
+    const capP=board[m.er][m.ec];
+    board[m.er][m.ec]=null;M.counts[capP.p]--;
+    const el=document.querySelector(`[data-id="${capP.id}"]`);if(el)el.classList.add('captured');
+    setTimeout(()=>{el&&el.remove();render();},300);
+    board[M.sel.r][M.sel.c]=null;board[r][c]=pie;
+    if(pie.p==='b'&&r===7||pie.p==='w'&&r===0)pie.k=true;
+    sfx(140,.12,'triangle',.25,80);sfx(220,.08,'triangle',.15,110);
+    const after=captureSteps(r,c,pie.k);
+    if(after.length){ // chain
+      M.chain={r,c};M.sel={r,c};M.moves=after;render();return;
+    }
+    M.chain=null;endTurn();
+  } else {
+    board[M.sel.r][M.sel.c]=null;board[r][c]=pie;
+    if(pie.p==='b'&&r===7||pie.p==='w'&&r===0)pie.k=true;
+    sfx(180,.08,'sine',.18);
+    endTurn();
+  }
+  render();
+}
+function endTurn(){
+  if(M.counts[opp(M.cur)]<=0)return win(M.cur);
+  M.cur=opp(M.cur);M.chain=null;
+  const anyMoves=[];
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(board[r][c]&&board[r][c].p===M.cur)anyMoves.push(...legalFor(r,c));
+  if(!anyMoves.length){win(M.cur==='b'?'w':'b');return;}
+  M.sel=null;M.moves=[];
+  turnDot.style.color=M.cur==='b'?'#000':'#fff';
+  turnText.textContent='Ход: '+(M.cur==='b'?'Чёрные':'Белые');
+  msg.textContent=hasAnyCapture(M.cur)?'Обязательное взятие!':'';
+}
+function win(p){
+  document.getElementById('board').innerHTML='<div style="grid-column:1/-1;grid-row:1/-1;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#ffd54f;text-align:center;padding:12px">🏆 Победа<br>'+(p==='b'?'Чёрных':'Белых')+'!</div>';
+  sfx(520,.3,'square',.18,660);setTimeout(()=>sfx(780,.35,'square',.15),200);
+}
+function render(){
+  boardEl.innerHTML='';
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    const sq=document.createElement('div');
+    sq.className='sq '+( (r+c)%2===0?'light':'dark');
+    sq.dataset.r=r;sq.dataset.c=c;
+    const pie=board[r][c];
+    if(pie){const p=document.createElement('div');
+      p.className='piece '+(pie.p==='b'?'b':'w')+(pie.k?' king':'');
+      p.dataset.id=pie.id;
+      if(M.sel&&M.sel.r===r&&M.sel.c===c)p.classList.add('selected');
+      sq.appendChild(p);}
+    sq.addEventListener('click',()=>onSq(r,c));
+    boardEl.appendChild(sq);
+  }
+  for(const m of M.moves){
+    const sq=boardEl.querySelector(`[data-r="${m.r}"][data-c="${m.c}"]`);
+    const d=document.createElement('div');d.className='dot'+(m.er!=null?' cap':'');
+    sq.appendChild(d);
+  }
+}
+function onSq(r,c){
+  const pie=board[r][c];
+  if(pie&&pie.p===M.cur&&(!M.chain||(M.chain&&pie.id===board[M.chain.r][M.chain.c].id))){
+    M.sel={r,c};M.moves=legalFor(r,c);render();return;
+  }
+  if(M.sel)tryMove(r,c);
+}
+initGame();
+</script>
+</body>
+</html>

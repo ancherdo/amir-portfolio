@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMIR DRIFT — аркадные гонки</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:#0a0d12;font-family:'Segoe UI',sans-serif;user-select:none}
+  #gameCanvas{display:block;width:100%;height:100%}
+
+  #menu,#dead{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#10141d 0%,#07080c 70%);color:#e8ecf5;text-align:center;padding:20px}
+  #dead{display:none}
+  .logo{font-size:clamp(36px,8vw,80px);font-weight:900;letter-spacing:5px;background:linear-gradient(90deg,#00d4ff,#7c5cff);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px}
+  .sub{color:#8ea0bb;font-size:15px;margin-bottom:24px;max-width:520px;line-height:1.6}
+  .btn{pointer-events:auto;cursor:pointer;background:linear-gradient(90deg,#00d4ff,#7c5cff);border:none;color:#081018;font-weight:900;font-size:18px;letter-spacing:1px;padding:16px 48px;border-radius:12px;box-shadow:0 8px 30px rgba(0,212,255,.35);transition:.2s;text-transform:uppercase}
+  .btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 14px 40px rgba(124,92,255,.5)}
+  .hint{color:#6d7f9a;font-size:13px;margin-top:22px;line-height:2}
+  .hint b{color:#aebfd8}
+  #howto{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:18px 0;font-size:13px}
+  .key{background:#1a2130;border:1px solid #313c53;border-radius:8px;padding:6px 12px;font-weight:700}
+  .big-num{font-size:56px;font-weight:900;color:#00d4ff;margin:10px 0}
+
+  #hud{position:fixed;inset:0;pointer-events:none;z-index:10;display:none}
+  #hp-wrap{position:absolute;left:24px;top:20px;color:#e8ecf5;text-shadow:0 2px 6px rgba(0,0,0,.8)}
+  #hp-bar{width:260px;height:14px;background:rgba(255,255,255,.12);border-radius:8px;margin-top:8px;overflow:hidden;border:1px solid rgba(255,255,255,.15)}
+  #hp-fill{height:100%;width:100%;background:linear-gradient(90deg,#43a047,#8bd450);transition:width .2s}
+  #coins{position:absolute;top:18px;left:50%;transform:translateX(-50%);font-size:30px;font-weight:900;color:#ffd54f;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+  #coins small{display:block;font-size:12px;color:#9fb0c7;font-weight:400;text-align:center}
+  #hud-right{position:absolute;right:24px;top:18px;text-align:right;font-size:23px;font-weight:700;color:#e8ecf5;text-shadow:0 2px 6px rgba(0,0,0,.8)}
+  #hud-right small{display:block;font-size:12px;color:#9fb0c7;font-weight:400}
+  #banner{position:absolute;top:32%;left:50%;transform:translate(-50%,-50%);font-size:40px;font-weight:900;letter-spacing:3px;text-transform:uppercase;opacity:0;transition:opacity .4s;color:#00d4ff;text-shadow:0 0 30px rgba(0,212,255,.6)}
+  #dmg{position:absolute;inset:0;box-shadow:inset 0 0 120px 50px rgba(255,40,20,.55);opacity:0;transition:opacity .3s}
+</style>
+</head>
+<body>
+
+<div id="menu">
+  <div class="logo">AMIR DRIFT</div>
+  <div class="sub">Аркадная гонка: собирай золотые монеты, уворачивайся от красных машин! Набери нужное число монет, чтобы перейти на новый уровень.</div>
+  <div id="howto">
+    <span class="key">W / ↑ — газ</span>
+    <span class="key">S / ↓ — назад</span>
+    <span class="key">A D — руль</span>
+    <span class="key">SPACE — ручник (дрифт)</span>
+  </div>
+  <button class="btn" onclick="startGame()">В ГНУТЬ</button>
+  <div class="hint"><b>Красные машины опасны!</b> Коснулся — потерял здоровье.<br>Зелёные зоны на земле дают ускорение.</div>
+</div>
+
+<div id="dead">
+  <div>АВАРИЯ!</div>
+  <div class="big-num" id="dead-score">0</div>
+  <div id="dead-info" style="color:#8ea0bb;margin-bottom:26px">Уровень 1</div>
+  <button class="btn" onclick="restartGame()">ЗАНОВО</button>
+</div>
+
+<div id="hud">
+  <div id="dmg"></div>
+  <div id="banner">УРОВЕНЬ 1</div>
+  <div id="hp-wrap">
+    <div id="hp-text">100</div>
+    <div id="hp-bar"><div id="hp-fill"></div></div>
+  </div>
+  <div id="coins">0 / 5<small>МОНЕТЫ</small></div>
+  <div id="hud-right"><div id="hud-level">1</div><small>УРОВЕНЬ</small></div>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script src="three.min.js"></script>
+<script>
+const canvas=document.getElementById('gameCanvas');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x0d1420);
+scene.fog=new THREE.Fog(0x0d1420,90,220);
+const camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.1,600);
+
+const hemi=new THREE.HemisphereLight(0xbdd0ff,0x33261a,.95); scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xfff1d0,1.15); sun.position.set(40,70,25); sun.castShadow=true;
+sun.shadow.mapSize.set(1024,1024); sun.shadow.camera.left=sun.shadow.camera.bottom=-80; sun.shadow.camera.right=sun.shadow.camera.top=80; sun.shadow.camera.far=300;
+scene.add(sun);
+
+function gridTexture(){const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');
+  g.fillStyle='#10161f';g.fillRect(0,0,256,256);g.strokeStyle='#1a2231';g.lineWidth=2;
+  for(let i=0;i<=256;i+=64){g.beginPath();g.moveTo(i,0);g.lineTo(i,256);g.stroke();g.beginPath();g.moveTo(0,i);g.lineTo(256,i);g.stroke();}
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(30,30);return t;}
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(260,260),new THREE.MeshStandardMaterial({map:gridTexture(),roughness:.95}));
+ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+
+// Boost zones (green pads)
+const boosts=[];
+[ [-30,-20],[25,-35],[35,30],[-40,10],[0,40],[15,5] ].forEach(([x,z])=>{
+  const b=new THREE.Mesh(new THREE.CircleGeometry(5,24).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:0x39ff6e,transparent:true,opacity:.25}));
+  b.position.set(x,.06,z); scene.add(b); boosts.push({x,z}); });
+
+const BOUND=58; const walls=[];
+function addWall(x,z,w,d){const m=new THREE.Mesh(new THREE.BoxGeometry(w,4,d),new THREE.MeshStandardMaterial({color:0x232c3d,roughness:.85}));
+  m.position.set(x,2,z);m.castShadow=m.receiveShadow=true;scene.add(m);
+  walls.push({minX:x-w/2,maxX:x+w/2,minZ:z-d/2,maxZ:z+d/2});}
+[[0,-BOUND],[0,BOUND],[-BOUND,0],[BOUND,0]].forEach(([x,z])=>addWall(x,z,2*BOUND,2));
+const crateMat=new THREE.MeshStandardMaterial({color:0x3a2a16,roughness:.9});
+for(let i=0;i<20;i++){const c=new THREE.Mesh(new THREE.BoxGeometry(2,2,2),crateMat);
+  c.position.set((Math.random()*2-1)*(BOUND-6),1,(Math.random()*2-1)*(BOUND-6));
+  if(Math.hypot(c.position.x,c.position.z)<10){continue;}
+  c.castShadow=c.receiveShadow=true;scene.add(c);const r=1.1;
+  walls.push({minX:c.position.x-r,maxX:c.position.x+r,minZ:c.position.z-r,maxZ:c.position.z+r});}
+
+// Car builder
+function buildCar(color,scale){
+  const g=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.BoxGeometry(1.7*scale,.55*scale,3.4*scale),new THREE.MeshStandardMaterial({color,metalness:.7,roughness:.35}));
+  body.position.y=.5*scale;body.castShadow=true;
+  const cab=new THREE.Mesh(new THREE.BoxGeometry(1.4*scale,.5*scale,1.4*scale),new THREE.MeshStandardMaterial({color:new THREE.Color(color).multiplyScalar(.75),metalness:.6,roughness:.4}));
+  cab.position.set(0,.95*scale,.1*scale);cab.castShadow=true;
+  const spoiler=new THREE.Mesh(new THREE.BoxGeometry(1.5*scale,.08*scale,.35*scale),body.material);
+  spoiler.position.set(0,.9*scale,-1.6*scale);
+  const axle=new THREE.Mesh(new THREE.BoxGeometry(.25*scale,.12*scale,2.1*scale),new THREE.MeshStandardMaterial({color:0x0a0d12}));
+  axle.position.y=.23*scale;
+  const wheelGeo=new THREE.CylinderGeometry(.32*scale,.32*scale,.22*scale,14);
+  wheelGeo.rotateZ(Math.PI/2);
+  const wheelMat=new THREE.MeshStandardMaterial({color:0x14161c,roughness:.9});
+  const wheels=[];
+  [[-.85,1.25],[.85,1.25],[-.85,-1.25],[.85,-1.25]].forEach(([x,z])=>{
+    const w=new THREE.Mesh(wheelGeo,wheelMat);w.position.set(x*scale,.32*scale,z*scale);g.add(w);wheels.push(w);});
+  g.add(body,cab,spoiler,axle,wheels);
+  return {g,wheels};
+}
+const playerCar=buildCar(0x00c8ff,1);
+playerCar.g.position.set(0,0,0);playerCar.g.rotation.y=0;scene.add(playerCar.g);
+
+// Physics
+const CAR={pos:{x:0,z:0},angle:0,speed:0,hp:100,maxSpeed:26,revMax:-9,accel:20,brake:45,friction:.6,steerRate:2.3};
+
+// Enemy cars
+const enemies=[];
+function spawnEnemy(){
+  const c=buildCar(0xff3b3b,1);
+  const side=(Math.random()*4)|0;
+  let x=0,z=0;
+  if(side===0){x=Math.random()*40-20;z=-BOUND+3;}
+  else if(side===1){x=Math.random()*40-20;z=BOUND-3;}
+  else if(side===2){x=-BOUND+3;z=Math.random()*40-20;}
+  else{x=BOUND-3;z=Math.random()*40-20;}
+  c.g.position.set(x,0,z);scene.add(c.g);
+  enemies.push({g:c.g,wheels:c.wheels,angle:Math.random()*6.3,speed:7+Math.random()*4,hp:3,cd:0,respawn:0});
+}
+function removeEnemy(e){scene.remove(e.g);const i=enemies.indexOf(e);if(i>=0)enemies.splice(i,1);}
+
+// Coins
+const coins=[];
+const coinMat=new THREE.MeshStandardMaterial({color:0xffc400,metalness:.85,roughness:.25,emissive:0x8a6200,emissiveIntensity:.4});
+const coinGeo=new THREE.CylinderGeometry(.6,.6,.12,22);
+coinGeo.rotateX(Math.PI/2);
+function spawnCoin(){
+  const m=new THREE.Mesh(coinGeo,coinMat);
+  let x,z,k=0,d;do{x=(Math.random()*2-1)*(BOUND-5);z=(Math.random()*2-1)*(BOUND-5);
+    d=Math.hypot(x-CAR.pos.x,z-CAR.pos.z);k++;}while(d<12&&k<20);
+  m.position.set(x,1.1,z);m.castShadow=true;scene.add(m);coins.push({m,bob:Math.random()*6});
+}
+function clearCoins(){coins.forEach(c=>scene.remove(c.m));coins.length=0;}
+
+// Game state
+let state='menu',level=0,kills=0,coinsGot=0,target=5,enemySpawnTimer=0,hitCd=0;
+const hudEl=document.getElementById('hud');
+const hpFill=document.getElementById('hp-fill'),hpText=document.getElementById('hp-text');
+const coinsEl=document.getElementById('coins'),levelEl=document.getElementById('hud-level'),banner=document.getElementById('banner');
+const dmgEl=document.getElementById('dmg');
+let actx;
+function sfx(f,dur,type,vol,slide){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();
+  const o=actx.createOscillator(),g=actx.createGain();o.type=type||'square';
+  o.frequency.setValueAtTime(f,actx.currentTime);if(slide)o.frequency.exponentialRampToValueAtTime(slide,actx.currentTime+dur);
+  g.gain.setValueAtTime(vol||.12,actx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+dur);
+  o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+dur);}catch(e){}}
+const keys={};
+addEventListener('keydown',e=>keys[e.code]=true);
+addEventListener('keyup',e=>keys[e.code]=false);
+
+const PAD=1.4;
+function collide(p){
+  if(p.x<-BOUND+PAD){p.x=-BOUND+PAD;}if(p.x>BOUND-PAD){p.x=BOUND-PAD;}
+  if(p.z<-BOUND+PAD){p.z=-BOUND+PAD;}if(p.z>BOUND-PAD){p.z=BOUND-PAD;}
+  for(const w of walls){const cx=Math.max(w.minX,Math.min(p.x,w.maxX)),cz=Math.max(w.minZ,Math.min(p.z,w.maxZ));
+    const dx=p.x-cx,dz=p.z-cz,d2=dx*dx+dz*dz;
+    if(d2<PAD*PAD){const d=Math.sqrt(d2)||.001,push=(PAD-d);p.x+=dx/d*push;p.z+=dz/d*push;
+      if(p.x<-BOUND+PAD){p.x=-BOUND+PAD;}if(p.x>BOUND-PAD){p.x=BOUND-PAD;}
+      if(p.z<-BOUND+PAD){p.z=-BOUND+PAD;}if(p.z>BOUND-PAD){p.z=BOUND-PAD;}}}
+}
+function showBanner(t){banner.textContent=t;banner.style.opacity=1;setTimeout(()=>banner.style.opacity=0,1600);}
+function updateHud(){hpText.textContent=Math.max(0,Math.round(CAR.hp));hpFill.style.width=Math.max(0,CAR.hp)+'%';
+  hpFill.style.background=CAR.hp>50?'linear-gradient(90deg,#43a047,#8bd450)':CAR.hp>25?'linear-gradient(90deg,#ff9800,#ffc107)':'linear-gradient(90deg,#e53935,#ff7043)';
+  coinsEl.innerHTML=coinsGot+' / '+target+'<small>МОНЕТЫ</small>';levelEl.textContent=level;}
+function resetRun(){
+  CAR.pos={x:0,z:0};CAR.angle=0;CAR.speed=0;CAR.hp=100;hitCd=0;
+  playerCar.g.position.set(0,0,0);playerCar.g.rotation.y=0;
+  enemies.forEach(removeEnemy);clearCoins();kills=0;coinsGot=0;level=0;target=5;enemySpawnTimer=0;
+  startLevel();updateHud();state='play';
+}
+function startLevel(){
+  level++;target=5+level*2;coinsGot=0;enemySpawnTimer=0;
+  for(let i=0;i<4;i++)spawnEnemy();
+  for(let i=0;i<target;i++)spawnCoin();
+  showBanner('УРОВЕНЬ '+level);
+}
+function startGame(){document.getElementById('menu').style.display='none';resetRun();}
+function restartGame(){document.getElementById('dead').style.display='none';resetRun();}
+function gameOver(){
+  state='dead';
+  document.getElementById('dead-score').textContent=coinsGot;
+  document.getElementById('dead-info').textContent='Уровень '+level+' · Монет: '+coinsGot;
+  setTimeout(()=>document.getElementById('dead').style.display='flex',500);
+  sfx(90,.7,'sawtooth',.25,40);
+}
+
+// Update car physics
+function drive(dt){
+  const gas=(keys.KeyW||keys.ArrowUp)?1:0;
+  const back=(keys.KeyS||keys.ArrowDown)?1:0;
+  const left=(keys.KeyA||keys.ArrowLeft)?1:0;
+  const right=(keys.KeyD||keys.ArrowRight)?1:0;
+  const handbrake=keys.Space?true:false;
+  const throttle=gas-back;
+  if(throttle>0){CAR.speed+=CAR.accel*dt;}
+  else if(throttle<0){CAR.speed-=CAR.accel*.7*dt;}
+  else{CAR.speed*=Math.exp(-dt*CAR.friction);if(Math.abs(CAR.speed)<.3)CAR.speed=0;}
+  CAR.speed=Math.max(CAR.revMax,Math.min(CAR.maxSpeed,CAR.speed));
+  const steer=(right-left)*(handbrake?2.0:1.0);
+  const ratio=Math.abs(CAR.speed)/CAR.maxSpeed;
+  CAR.angle+=steer*CAR.steerRate*ratio*dt;
+  const fw={x:Math.sin(CAR.angle),z:Math.cos(CAR.angle)};
+  CAR.pos.x+=fw.x*CAR.speed*dt;CAR.pos.z+=fw.z*CAR.speed*dt;
+  collide(CAR.pos);
+  playerCar.g.position.set(CAR.pos.x,0,CAR.pos.z);
+  playerCar.g.rotation.y=CAR.angle;
+
+  // boost zones
+  for(const b of boosts){if(Math.hypot(CAR.pos.x-b.x,CAR.pos.z-b.z)<6&&CAR.speed<CAR.maxSpeed*1.9){
+    CAR.speed=Math.min(CAR.maxSpeed*1.9,CAR.speed+40*dt);}}
+  // wheel spin
+  const spin=CAR.speed/Math.max(.32,1)*dt*4;
+  playerCar.wheels.forEach(w=>w.rotation.x+=spin);
+  // bob-ish tilt
+  playerCar.g.rotation.z=(-steer*ratio*.06);
+  playerCar.g.rotation.x=(-CAR.speed*.0020);
+
+  // coins
+  for(let i=coins.length-1;i>=0;i--){const c=coins[i];
+    c.m.rotation.y+=dt*3;c.m.position.y=1.1+Math.sin(c.bob+performance.now()*.004)*.15;
+    if(Math.hypot(c.m.position.x-CAR.pos.x,c.m.position.z-CAR.pos.z)<2.1){
+      scene.remove(c.m);coins.splice(i,1);coinsGot++;sfx(880,.09,'sine',.18,1320);sfx(1320,.06,'sine',.12);
+      if(coinsGot>=target){sfx(660,.15,'square',.15,990);startLevel();}updateHud();}
+  }
+}
+
+function updateEnemies(dt){
+  enemySpawnTimer+=dt;
+  if((enemies.length<4+level)&&enemySpawnTimer>6){enemySpawnTimer=0;spawnEnemy();}
+  for(let i=enemies.length-1;i>=0;i--){const e=enemies[i];
+    const dpx=CAR.pos.x-e.g.position.x,dpx2=CAR.pos.z-e.g.position.z;
+    const desired=Math.atan2(dpx,dpx2);
+    let diff=desired-e.angle;while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;
+    e.angle+=Math.max(-2.5*dt,Math.min(2.5*dt,diff));
+    e.speed=Math.min(15+level*.4,e.speed+14*dt);
+    const fw={x:Math.sin(e.angle),z:Math.cos(e.angle)};
+    e.g.position.x+=fw.x*e.speed*dt;e.g.position.z+=fw.z*e.speed*dt;
+    collide(e.g.position);e.g.position.y=0;e.g.rotation.y=e.angle;
+    e.wheels.forEach(w=>w.rotation.x+=e.speed*dt*2);
+    if(Math.hypot(e.g.position.x-CAR.pos.x,e.g.position.z-CAR.pos.z)<2.5&&e.cd<=0){
+      CAR.hp-=16;e.cd=.8;hitCd=.3;dmgEl.style.opacity=1;setTimeout(()=>dmgEl.style.opacity=0,220);
+      sfx(140,.2,'sawtooth',.25,60);showBanner('УДАР!');updateHud();
+      if(CAR.hp<=0){gameOver();}
+    }
+    e.cd-=dt;
+  }
+}
+
+// Camera follow
+const camPos=new THREE.Vector3(0,6,-11);
+function updateCamera(dt){
+  const dist=-10.5+(-CAR.speed*.06), height=5+(-CAR.speed*.05);
+  const bv=Math.sin(CAR.angle), cv=Math.cos(CAR.angle);
+  const tx=CAR.pos.x-bv*dist, tz=CAR.pos.z-cv*dist;
+  camPos.x+= (tx-camPos.x)*Math.min(1,dt*5);
+  camPos.y+= (height-camPos.y)*Math.min(1,dt*5);
+  camPos.z+= (tz-camPos.z)*Math.min(1,dt*5);
+  camera.position.copy(camPos);
+  const look=new THREE.Vector3(CAR.pos.x,2,CAR.pos.z);
+  camera.lookAt(look);
+}
+
+// Loop
+let last=performance.now();
+function loop(now){requestAnimationFrame(loop);
+  const dt=Math.min(.05,(now-last)/1000);last=now;
+  if(state==='play'){drive(dt);updateEnemies(dt);}
+  updateCamera(dt);
+  renderer.render(scene,camera);
+}
+renderer.setSize(innerWidth,innerHeight);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
