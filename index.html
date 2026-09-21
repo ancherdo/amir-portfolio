@@ -78,6 +78,10 @@
   .hero-in{position:relative;z-index:2;max-width:980px}
   .badge{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(0,229,255,.4);color:var(--cyan);
     font-size:13px;font-weight:700;padding:9px 20px;border-radius:50px;background:rgba(0,229,255,.07);margin-bottom:32px;letter-spacing:1px}
+  .badge b{display:inline-flex;align-items:center;gap:9px}
+  .badges{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-bottom:32px}
+  .badges .badge{margin-bottom:0}
+  .badge.ft{color:#ffd54f;border-color:rgba(255,213,79,.4);background:rgba(255,213,79,.07)}
   .badge i{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan);animation:pulse 1.5s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
   .hero-in h1{font-family:'Unbounded';font-weight:900;font-size:clamp(38px,8vw,96px);line-height:1.02;letter-spacing:1px}
@@ -127,6 +131,11 @@
   .frd.king .av{box-shadow:0 8px 22px rgba(0,0,0,.45),0 0 0 3px rgba(255,255,255,.14),0 0 22px var(--g1,var(--cyan))}
   .fr-crown{position:absolute;top:10px;right:12px;font-size:16px;z-index:2!important;animation:bob 1.8s ease-in-out infinite}
   @keyframes shroom{to{transform:rotate(360deg)}}
+  .frd-msg{margin-top:44px;text-align:center;padding:34px 26px;border-radius:22px;
+    background:linear-gradient(160deg,var(--card2),var(--card));border:1px dashed rgba(255,213,79,.4)}
+  .frd-msg span{font-size:30px;animation:bob 2.2s ease-in-out infinite;display:inline-block}
+  .frd-msg b{font-family:'Unbounded';font-size:clamp(15px,2.4vw,20px);letter-spacing:1.5px;color:var(--gold);display:block;margin-top:8px}
+  .frd-msg p{color:var(--mut);line-height:1.9;max-width:620px;margin:14px auto 0;font-size:14.5px}
   .scroll-hint span{display:block;width:1px;height:36px;background:linear-gradient(var(--cyan),transparent);margin:10px auto 0;animation:drip 1.6s infinite}
   @keyframes drip{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
@@ -275,7 +284,10 @@
   <div class="aurora a1"></div><div class="aurora a2"></div><div class="aurora a3"></div>
   <canvas id="starfield"></canvas>
   <div class="hero-in">
-    <div class="badge"><i></i> ДОСТУПЕН ДЛЯ ПРОЕКТОВ</div>
+    <div class="badges">
+      <div class="badge"><i></i> ДОСТУПЕН ДЛЯ ПРОЕКТОВ</div>
+      <div class="badge ft">⚽ Футболист «Пахтакора»</div>
+    </div>
     <h1><span class="ol">ПРИВЕТ, Я</span><br><span class="gr">АМИР МАХМУДОВ</span></h1>
     <div class="typer" id="typer"></div>
     <div class="cta">
@@ -309,11 +321,12 @@
       <div class="photo reveal" data-tilt><img id="avatarImg" src="1.jpg" alt="Амир Махмудов" onerror="this.style.display='none'"><span class="tag3d">⚡ 10 дней и уже в деле</span></div>
       <div class="about-txt">
         <h3 class="reveal">ДИЗАЙНЕР, КОТОРЫЙ <span class="gr">ТОЖЕ ДЕЛАЕТ ИГРЫ</span></h3>
-        <p class="reveal d1">Расскажу честно: я только начинаю путь — но уже влюблён в процесс. Собираю макеты в <b>Figma</b>, рисую в <b>Photoshop</b> и <b>Illustrator</b>, изучаю композицию, цвет и типографику. А ещё я пишу настоящие браузерные игры на <b>JavaScript</b>.</p>
+        <p class="reveal d1">Расскажу честно: я только начинаю путь — но уже влюблён в процесс. Собираю макеты в <b>Figma</b>, рисую в <b>Photoshop</b> и <b>Illustrator</b>, изучаю композицию, цвет и типографику. А ещё я — <b>футболист «Пахтакора»</b> и пишу настоящие браузерные игры на <b>JavaScript</b>.</p>
         <p class="reveal d2">Моя философия: <b>простота + характер</b>. Ничего лишнего — но каждая деталь должна запоминаться. Создаю логотипы, постеры, интерфейсы и 3D-арены, где можно крутить дрифты и охотиться на ботов.</p>
         <div class="tags reveal d3">
           <span class="tag">Figma</span><span class="tag">Photoshop</span><span class="tag">Illustrator</span>
           <span class="tag">JavaScript</span><span class="tag">Three.js 3D</span><span class="tag">HTML / CSS</span>
+          <span class="tag" style="color:var(--gold)">⚽ «Пахтакор»</span>
         </div>
         <div class="stats">
           <div class="stat reveal d1"><b><span class="cnt" data-n="10">0</span></b><span>дней практики</span></div>
@@ -431,10 +444,13 @@
       <div style="display:flex;gap:8px;justify-content:center;margin-top:28px;font-size:22px"><span class="hr" style="animation-delay:0s">💗</span><span class="hr" style="animation-delay:.3s">💗</span><span class="hr" style="animation-delay:.6s">💗</span><span class="hr" style="animation-delay:.9s">💗</span><span class="hr" style="animation-delay:1.2s">💗</span></div>
     </div>
     <div style="margin-top:70px" class="reveal d1">
-      <div class="kick" style="border-color:rgba(255,213,79,.4);color:var(--gold)">Друзья</div>
+      <div class="kick" style="border-color:rgba(255,213,79,.4);color:var(--gold)">Главные люди</div>
       <h2 style="font-family:'Unbounded';font-weight:900;font-size:clamp(24px,4.4vw,44px);margin:6px 0 36px">МОИ ЛУЧШИЕ ДРУЗЬЯ</h2>
       <div class="friends">
-        <div class="frd king tilt reveal" data-tilt style="--g1:var(--pink);--g2:var(--violet);--kd:0s">
+        <div class="frd king tilt reveal" data-tilt style="--g1:#ffd54f;--g2:#ff9f1c;--kd:0s">
+          <div class="av">🧡</div><div class="fr-crown">🏆</div><b>РОДИТЕЛИ</b><small>сделали меня таким</small>
+        </div>
+        <div class="frd king tilt reveal" data-tilt style="--g1:var(--pink);--g2:var(--violet);--kd:-.8s">
           <div class="av">👑</div><div class="fr-crown">⭐</div><b>РУФИНА</b><small>самая лучшая подруга</small>
         </div>
         <div class="frd king tilt reveal d1" data-tilt style="--g1:var(--cyan);--g2:var(--violet);--kd:-.8s">
@@ -458,6 +474,10 @@
         <div class="frd king tilt reveal d3" data-tilt style="--g1:#00e5ff;--g2:#ffd54f;--kd:-5.6s">
           <div class="av">🎮</div><b>ИСО</b><small>лучший друг</small>
         </div>
+      </div>
+      <div class="frd-msg reveal d1">
+        <span>💛</span><b>ЭТИ ЛЮДИ — САМЫЕ ЛУЧШИЕ.</b>
+        <p>Родители сделали меня таким — спасибо им за всё. А друзья всегда рядом и вдохновляют меня каждый день. Мои главные люди — навсегда.</p>
       </div>
     </div>
   </div>
@@ -562,7 +582,7 @@ setTimeout(()=>document.querySelector('#loader .bar i').style.width='100%',80);
 setTimeout(()=>{loader.classList.add('done');setTimeout(()=>loader.remove(),600);},1600);
 
 /* Typewriter */
-const phrases=['Креативный <b>дизайнер</b> 🎨','Разработчик <b>браузерных игр</b> 🎮','Любитель <b>неона и дрифта</b> 🏎️','Начинаю — но уже <b>с душой</b> ⚡'];
+const phrases=['Креативный <b>дизайнер</b> 🎨','Футболист <b>«Пахтакора»</b> ⚽','Разработчик <b>браузерных игр</b> 🎮','Любитель <b>неона и дрифта</b> 🏎️','Начинаю — но уже <b>с душой</b> ⚡'];
 let pi=0,ci=0,deleting=false;
 const typer=document.getElementById('typer');
 function type(){
