@@ -96,6 +96,10 @@
     display:flex;align-items:center;justify-content:center;font-size:19px;transition:.3s}
   .socials a:hover{background:var(--grad);transform:translateY(-5px);border-color:transparent}
   .scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:3;color:var(--mut);font-size:12px;letter-spacing:2px;text-transform:uppercase;text-align:center}
+  #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);z-index:9997;background:var(--grad);
+    color:#05060a;font-weight:800;font-size:14px;padding:14px 26px;border-radius:50px;opacity:0;
+    transition:transform .4s,opacity .4s;box-shadow:0 12px 40px rgba(0,229,255,.35)}
+  #toast.on{transform:translateX(-50%) translateY(0);opacity:1}
   .hr{display:inline-block;animation:hrF 2.4s ease-in-out infinite}
   @keyframes hrF{0%,100%{transform:translateY(0) scale(1);filter:none}50%{transform:translateY(-12px) scale(1.18);filter:drop-shadow(0 8px 14px rgba(255,42,109,.6))}}
   .scroll-hint span{display:block;width:1px;height:36px;background:linear-gradient(var(--cyan),transparent);margin:10px auto 0;animation:drip 1.6s infinite}
@@ -429,9 +433,10 @@
       </div>
       <div class="c-mail reveal d2">
         <div class="big-ic">📮</div>
-        <h4>Напишите на почту</h4>
-        <p>Расскажите о вашей идее или проекте — отвечу с картой идей и предложениями.</p>
-        <a class="btn" href="mailto:amirmaxmudov7777@gmail.com?subject=Проект%20для%20Амира">Написать письмо</a>
+        <h4>Моя почта</h4>
+        <p id="mailShow" style="font-weight:800;color:var(--txt);font-size:15px">amirmaxmudov7777@gmail.com</p>
+        <p style="color:var(--mut);font-size:13.5px;max-width:380px;line-height:1.7">Нажмите кнопку — адрес скопируется в буфер, дальше вставьте его в любом почтовом приложении.</p>
+        <button class="btn" onclick="copyEmail()" style="cursor:none">📋 Скопировать e-mail</button>
       </div>
     </div>
   </div>
@@ -443,7 +448,23 @@
   <div>HTML · CSS · JS · Three.js</div>
 </footer>
 
+<div id="toast">копировано</div>
+
 <script>
+function copyEmail(){
+  const mail='amirmaxmudov7777@gmail.com';
+  const done=()=>{const t=document.getElementById('toast');
+    t.textContent='✅ E-mail скопирован: '+mail;t.classList.add('on');
+    setTimeout(()=>t.classList.remove('on'),2400);};
+  if(navigator.clipboard&&navigator.clipboard.writeText)
+    navigator.clipboard.writeText(mail).then(done).catch(()=>{legacyCopy();done();});
+  else legacyCopy(),done();
+  function legacyCopy(){const inp=document.createElement('textarea');
+    inp.value=mail;inp.style.position='fixed';inp.style.opacity=0;
+    document.body.appendChild(inp);inp.select();
+    try{document.execCommand('copy');}catch(e){}
+    inp.remove();}
+}
 /* Cursor */
 const curDot=document.getElementById('curDot'),curRing=document.getElementById('curRing');
 let mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
