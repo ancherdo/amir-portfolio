@@ -103,12 +103,28 @@
   .hr{display:inline-block;animation:hrF 2.4s ease-in-out infinite}
   @keyframes hrF{0%,100%{transform:translateY(0) scale(1);filter:none}50%{transform:translateY(-12px) scale(1.18);filter:drop-shadow(0 8px 14px rgba(255,42,109,.6))}}
   .friends{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
-  .frd{position:relative;background:linear-gradient(160deg,var(--card2),var(--card));
-    border:1px solid var(--line);border-radius:18px;padding:26px 12px;text-align:center;transition:.35s}
-  .frd:hover{transform:translateY(-6px);border-color:rgba(255,213,79,.45);box-shadow:0 16px 40px rgba(255,213,79,.15)}
-  .frd b{font-family:'Unbounded';font-size:16px;letter-spacing:1px;display:block;color:#fff}
-  .frd small{color:var(--mut);font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;display:block}
-  .frd .fr-crown{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:22px;animation:bob 2s ease-in-out infinite}
+  .frd{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--card2),var(--card));
+    border:1px solid var(--line);border-radius:18px;padding:26px 12px 20px;text-align:center;
+    display:flex;flex-direction:column;align-items:center;transition:.35s;will-change:transform}
+  .frd::before{content:'';position:absolute;inset:-60%;pointer-events:none;
+    background:conic-gradient(from 0deg,transparent 0%,var(--g1,var(--cyan)) 25%,transparent 50%,var(--g2,var(--pink)) 75%,transparent 100%);
+    opacity:0;transition:opacity .4s}
+  .frd::after{content:'';position:absolute;inset:1px;border-radius:17px;background:linear-gradient(160deg,var(--card2),var(--card));pointer-events:none}
+  .frd:hover::before{opacity:.9}
+  .frd:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,0,0,.45)}
+  .frd>*{position:relative;z-index:1}
+  .frd .av{width:66px;height:66px;border-radius:50%;margin-bottom:12px;font-size:32px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(140deg,var(--g1,var(--cyan)),var(--g2,var(--pink)));
+    box-shadow:0 8px 22px rgba(0,0,0,.45),0 0 0 3px rgba(255,255,255,.08);transition:.35s}
+  .frd:hover .av{transform:scale(1.14) rotate(-8deg)}
+  .frd .av+div,.frd .av{border-radius:50%}
+  .frd b{font-family:'Unbounded';font-size:15.5px;letter-spacing:1px;display:block;color:#fff}
+  .frd small{color:var(--mut);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;display:block}
+  .frd.king::before{animation:shroom 5s linear infinite;opacity:.7}
+  .frd.king{border-color:rgba(255,213,79,.5)}
+  .fr-crown{position:absolute;top:10px;right:12px;font-size:16px;z-index:2!important;animation:bob 1.8s ease-in-out infinite}
+  @keyframes shroom{to{transform:rotate(360deg)}}
   .scroll-hint span{display:block;width:1px;height:36px;background:linear-gradient(var(--cyan),transparent);margin:10px auto 0;animation:drip 1.6s infinite}
   @keyframes drip{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
@@ -413,17 +429,33 @@
       <div style="display:flex;gap:8px;justify-content:center;margin-top:28px;font-size:22px"><span class="hr" style="animation-delay:0s">💗</span><span class="hr" style="animation-delay:.3s">💗</span><span class="hr" style="animation-delay:.6s">💗</span><span class="hr" style="animation-delay:.9s">💗</span><span class="hr" style="animation-delay:1.2s">💗</span></div>
     </div>
     <div style="margin-top:70px" class="reveal d1">
-      <div class="kick" style="border-color:rgba(255,213,79,.4);color:var(--gold)">Банда</div>
-      <h2 style="font-family:'Unbounded';font-weight:900;font-size:clamp(24px,4.4vw,44px);margin:6px 0 26px">МОИ ЛУЧШИЕ КЕНТЫ</h2>
+      <div class="kick" style="border-color:rgba(255,213,79,.4);color:var(--gold)">Друзья</div>
+      <h2 style="font-family:'Unbounded';font-weight:900;font-size:clamp(24px,4.4vw,44px);margin:6px 0 36px">МОИ ЛУЧШИЕ ДРУЗЬЯ</h2>
       <div class="friends">
-        <div class="frd tilt reveal" data-tilt><span class="fr-crown">👑</span><b>РУФИНА</b><small>лучшая подруга</small></div>
-        <div class="frd tilt reveal d1" data-tilt><b>ШАХЗОД</b><small>кент</small></div>
-        <div class="frd tilt reveal d2" data-tilt><b>ДИЁР</b><small>кент</small></div>
-        <div class="frd tilt reveal d3" data-tilt><b>ЯХЁ</b><small>кент</small></div>
-        <div class="frd tilt reveal" data-tilt><b>ШОХРУХ</b><small>кент</small></div>
-        <div class="frd tilt reveal d1" data-tilt><b>АНВАР</b><small>кент</small></div>
-        <div class="frd tilt reveal d2" data-tilt><b>САЙДА</b><small>кент</small></div>
-        <div class="frd tilt reveal d3" data-tilt><b>ИСО</b><small>кент</small></div>
+        <div class="frd king tilt reveal" data-tilt style="--g1:var(--pink);--g2:var(--violet)">
+          <div class="av">👑</div><div class="fr-crown">⭐</div><b>РУФИНА</b><small>самая лучшая подруга</small>
+        </div>
+        <div class="frd tilt reveal d1" data-tilt style="--g1:var(--cyan);--g2:var(--violet)">
+          <div class="av">🤙</div><b>ШАХЗОД</b><small>лучший друг</small>
+        </div>
+        <div class="frd tilt reveal d2" data-tilt style="--g1:#ffb300;--g2:var(--pink)">
+          <div class="av">😎</div><b>ДИЁР</b><small>лучший друг</small>
+        </div>
+        <div class="frd tilt reveal d3" data-tilt style="--g1:#ff6b35;--g2:#ff2a6d">
+          <div class="av">🔥</div><b>ЯХЁ</b><small>лучший друг</small>
+        </div>
+        <div class="frd tilt reveal" data-tilt style="--g1:var(--pink);--g2:var(--cyan)">
+          <div class="av">⚡</div><b>ШОХРУХ</b><small>лучший друг</small>
+        </div>
+        <div class="frd tilt reveal d1" data-tilt style="--g1:#7c5cff;--g2:#00e5ff">
+          <div class="av">💪</div><b>АНВАР</b><small>лучший друг</small>
+        </div>
+        <div class="frd tilt reveal d2" data-tilt style="--g1:#ff5c8a;--g2:#ffd54f">
+          <div class="av">🌸</div><b>САЙДА</b><small>лучший друг</small>
+        </div>
+        <div class="frd tilt reveal d3" data-tilt style="--g1:#00e5ff;--g2:#ffd54f">
+          <div class="av">🎮</div><b>ИСО</b><small>лучший друг</small>
+        </div>
       </div>
     </div>
   </div>
