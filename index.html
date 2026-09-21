@@ -433,10 +433,13 @@
       </div>
       <div class="c-mail reveal d2">
         <div class="big-ic">📮</div>
-        <h4>Моя почта</h4>
+        <h4>Написать письмо</h4>
         <p id="mailShow" style="font-weight:800;color:var(--txt);font-size:15px">amirmaxmudov7777@gmail.com</p>
-        <p style="color:var(--mut);font-size:13.5px;max-width:380px;line-height:1.7">Нажмите кнопку — адрес скопируется в буфер, дальше вставьте его в любом почтовом приложении.</p>
-        <button class="btn" onclick="copyEmail()" style="cursor:none">📋 Скопировать e-mail</button>
+        <p style="color:var(--mut);font-size:13.5px;max-width:380px;line-height:1.7">Нажмите кнопку — сразу откроется Gmail с уже заполненным адресом получателя.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:400px">
+          <a class="btn" style="justify-content:center" href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=amirmaxmudov7777@gmail.com&su=%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82%20%D0%B4%D0%BB%D1%8F%20%D0%90%D0%BC%D0%B8%D1%80%D0%B0&body=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D0%90%D0%BC%D0%B8%D1%80!%0A%0A" target="_blank" rel="noopener">✉️ Написать в Gmail</a>
+          <button class="btn ghost" onclick="copyEmail()" style="cursor:none;justify-content:center">📋 Скопировать e-mail</button>
+        </div>
       </div>
     </div>
   </div>
