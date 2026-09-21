@@ -121,8 +121,10 @@
   .frd .av+div,.frd .av{border-radius:50%}
   .frd b{font-family:'Unbounded';font-size:15.5px;letter-spacing:1px;display:block;color:#fff}
   .frd small{color:var(--mut);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;display:block}
-  .frd.king::before{animation:shroom 5s linear infinite;opacity:.7}
+  .frd.king::before{animation:shroom 5s linear infinite var(--kd,0s);opacity:.45}
+  .frd.king:hover::before{opacity:.9}
   .frd.king{border-color:rgba(255,213,79,.5)}
+  .frd.king .av{box-shadow:0 8px 22px rgba(0,0,0,.45),0 0 0 3px rgba(255,255,255,.14),0 0 22px var(--g1,var(--cyan))}
   .fr-crown{position:absolute;top:10px;right:12px;font-size:16px;z-index:2!important;animation:bob 1.8s ease-in-out infinite}
   @keyframes shroom{to{transform:rotate(360deg)}}
   .scroll-hint span{display:block;width:1px;height:36px;background:linear-gradient(var(--cyan),transparent);margin:10px auto 0;animation:drip 1.6s infinite}
@@ -432,28 +434,28 @@
       <div class="kick" style="border-color:rgba(255,213,79,.4);color:var(--gold)">Друзья</div>
       <h2 style="font-family:'Unbounded';font-weight:900;font-size:clamp(24px,4.4vw,44px);margin:6px 0 36px">МОИ ЛУЧШИЕ ДРУЗЬЯ</h2>
       <div class="friends">
-        <div class="frd king tilt reveal" data-tilt style="--g1:var(--pink);--g2:var(--violet)">
+        <div class="frd king tilt reveal" data-tilt style="--g1:var(--pink);--g2:var(--violet);--kd:0s">
           <div class="av">👑</div><div class="fr-crown">⭐</div><b>РУФИНА</b><small>самая лучшая подруга</small>
         </div>
-        <div class="frd tilt reveal d1" data-tilt style="--g1:var(--cyan);--g2:var(--violet)">
+        <div class="frd king tilt reveal d1" data-tilt style="--g1:var(--cyan);--g2:var(--violet);--kd:-.8s">
           <div class="av">🤙</div><b>ШАХЗОД</b><small>лучший друг</small>
         </div>
-        <div class="frd tilt reveal d2" data-tilt style="--g1:#ffb300;--g2:var(--pink)">
+        <div class="frd king tilt reveal d2" data-tilt style="--g1:#ffb300;--g2:var(--pink);--kd:-1.6s">
           <div class="av">😎</div><b>ДИЁР</b><small>лучший друг</small>
         </div>
-        <div class="frd tilt reveal d3" data-tilt style="--g1:#ff6b35;--g2:#ff2a6d">
+        <div class="frd king tilt reveal d3" data-tilt style="--g1:#ff6b35;--g2:#ff2a6d;--kd:-2.4s">
           <div class="av">🔥</div><b>ЯХЁ</b><small>лучший друг</small>
         </div>
-        <div class="frd tilt reveal" data-tilt style="--g1:var(--pink);--g2:var(--cyan)">
+        <div class="frd king tilt reveal" data-tilt style="--g1:var(--pink);--g2:var(--cyan);--kd:-3.2s">
           <div class="av">⚡</div><b>ШОХРУХ</b><small>лучший друг</small>
         </div>
-        <div class="frd tilt reveal d1" data-tilt style="--g1:#7c5cff;--g2:#00e5ff">
+        <div class="frd king tilt reveal d1" data-tilt style="--g1:#7c5cff;--g2:#00e5ff;--kd:-4s">
           <div class="av">💪</div><b>АНВАР</b><small>лучший друг</small>
         </div>
-        <div class="frd tilt reveal d2" data-tilt style="--g1:#ff5c8a;--g2:#ffd54f">
+        <div class="frd king tilt reveal d2" data-tilt style="--g1:#ff5c8a;--g2:#ffd54f;--kd:-4.8s">
           <div class="av">🌸</div><b>САЙДА</b><small>лучший друг</small>
         </div>
-        <div class="frd tilt reveal d3" data-tilt style="--g1:#00e5ff;--g2:#ffd54f">
+        <div class="frd king tilt reveal d3" data-tilt style="--g1:#00e5ff;--g2:#ffd54f;--kd:-5.6s">
           <div class="av">🎮</div><b>ИСО</b><small>лучший друг</small>
         </div>
       </div>
