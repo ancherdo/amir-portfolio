@@ -71,6 +71,14 @@
 
 <script src="three.min.js"></script>
 <script>
+window.addEventListener('error',function(e){
+  const d=document.getElementById('errbox');
+  d.textContent='XATO: '+e.message;
+  d.style.display='block';
+});
+</script>
+<style>#errbox{position:fixed;left:0;right:0;bottom:0;z-index:99;background:#7a1420;color:#fff;font:13px monospace;padding:8px 14px;display:none;white-space:pre-wrap}</style>
+<script>
 const canvas=document.getElementById('gameCanvas');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
@@ -146,7 +154,8 @@ function buildCar(color){
   [[-.82,1.25],[.82,1.25],[-.82,-1.25],[.82,-1.25]].forEach(([x,z])=>{const w=new THREE.Mesh(wheelGeo,wheelMat);w.position.set(x,.32,z);g.add(w);wheels.push(w);});
   const underglow=new THREE.Mesh(new THREE.PlaneGeometry(2.4,4.2),new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:.45,depthWrite:false}));
   underglow.rotation.x=-Math.PI/2;underglow.position.y=.14;
-  g.add(body,cab,hood,spoilerLeg1,spoilerLeg2,spoiler,wheels,underglow);
+  g.add(body,cab,hood,spoilerLeg1,spoilerLeg2,spoiler,underglow);
+  g.add(...wheels);
   return {g,wheels,underglow};
 }
 const car=buildCar(0x0e1030);

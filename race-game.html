@@ -70,6 +70,14 @@
 
 <script src="three.min.js"></script>
 <script>
+window.addEventListener('error',function(e){
+  const d=document.getElementById('errbox');
+  d.textContent='XATO: '+e.message;
+  d.style.display='block';
+});
+</script>
+<style>#errbox{position:fixed;left:0;right:0;bottom:0;z-index:99;background:#7a1420;color:#fff;font:13px monospace;padding:8px 14px;display:none;white-space:pre-wrap}</style>
+<script>
 const canvas=document.getElementById('gameCanvas');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
@@ -127,7 +135,8 @@ function buildCar(color,scale){
   const wheels=[];
   [[-.85,1.25],[.85,1.25],[-.85,-1.25],[.85,-1.25]].forEach(([x,z])=>{
     const w=new THREE.Mesh(wheelGeo,wheelMat);w.position.set(x*scale,.32*scale,z*scale);g.add(w);wheels.push(w);});
-  g.add(body,cab,spoiler,axle,wheels);
+  g.add(body,cab,spoiler,axle);
+  g.add(...wheels);
   return {g,wheels};
 }
 const playerCar=buildCar(0x00c8ff,1);
