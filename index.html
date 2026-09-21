@@ -102,6 +102,13 @@
   #toast.on{transform:translateX(-50%) translateY(0);opacity:1}
   .hr{display:inline-block;animation:hrF 2.4s ease-in-out infinite}
   @keyframes hrF{0%,100%{transform:translateY(0) scale(1);filter:none}50%{transform:translateY(-12px) scale(1.18);filter:drop-shadow(0 8px 14px rgba(255,42,109,.6))}}
+  .friends{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+  .frd{position:relative;background:linear-gradient(160deg,var(--card2),var(--card));
+    border:1px solid var(--line);border-radius:18px;padding:26px 12px;text-align:center;transition:.35s}
+  .frd:hover{transform:translateY(-6px);border-color:rgba(255,213,79,.45);box-shadow:0 16px 40px rgba(255,213,79,.15)}
+  .frd b{font-family:'Unbounded';font-size:16px;letter-spacing:1px;display:block;color:#fff}
+  .frd small{color:var(--mut);font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;display:block}
+  .frd .fr-crown{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:22px;animation:bob 2s ease-in-out infinite}
   .scroll-hint span{display:block;width:1px;height:36px;background:linear-gradient(var(--cyan),transparent);margin:10px auto 0;animation:drip 1.6s infinite}
   @keyframes drip{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
@@ -404,6 +411,20 @@
         Этот сайт, мои игры и мечты — всё это намного ярче, потому что она в моей жизни.
       </p>
       <div style="display:flex;gap:8px;justify-content:center;margin-top:28px;font-size:22px"><span class="hr" style="animation-delay:0s">💗</span><span class="hr" style="animation-delay:.3s">💗</span><span class="hr" style="animation-delay:.6s">💗</span><span class="hr" style="animation-delay:.9s">💗</span><span class="hr" style="animation-delay:1.2s">💗</span></div>
+    </div>
+    <div style="margin-top:70px" class="reveal d1">
+      <div class="kick" style="border-color:rgba(255,213,79,.4);color:var(--gold)">Банда</div>
+      <h2 style="font-family:'Unbounded';font-weight:900;font-size:clamp(24px,4.4vw,44px);margin:6px 0 26px">МОИ ЛУЧШИЕ КЕНТЫ</h2>
+      <div class="friends">
+        <div class="frd tilt reveal" data-tilt><span class="fr-crown">👑</span><b>РУФИНА</b><small>лучшая подруга</small></div>
+        <div class="frd tilt reveal d1" data-tilt><b>ШАХЗОД</b><small>кент</small></div>
+        <div class="frd tilt reveal d2" data-tilt><b>ДИЁР</b><small>кент</small></div>
+        <div class="frd tilt reveal d3" data-tilt><b>ЯХЁ</b><small>кент</small></div>
+        <div class="frd tilt reveal" data-tilt><b>ШОХРУХ</b><small>кент</small></div>
+        <div class="frd tilt reveal d1" data-tilt><b>АНВАР</b><small>кент</small></div>
+        <div class="frd tilt reveal d2" data-tilt><b>САЙДА</b><small>кент</small></div>
+        <div class="frd tilt reveal d3" data-tilt><b>ИСО</b><small>кент</small></div>
+      </div>
     </div>
   </div>
 </section>
