@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMIRELLO Studio — Создание сайтов и интернет-магазинов</title>
+<meta name="description" content="Покупайте готовые сайты: лендинги, корпоративные сайты, интернет-магазины, SEO и поддержка. Быстро, качественно, с гарантией.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060a;--bg2:#0a0d16;--card:#0e1220;--card2:#121829;--line:rgba(255,255,255,.07);
+  --txt:#eef2fa;--mut:#8d99b5;--cyan:#00e5ff;--violet:#7c5cff;--pink:#ff2a6d;--gold:#ffd54f;
+  --green:#3ddc74;
+  --grad:linear-gradient(100deg,var(--cyan),var(--violet) 50%,var(--pink));
+  --rad:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Manrope',sans-serif;overflow-x:hidden;cursor:none}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:none;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit}
+::selection{background:var(--pink);color:#fff}
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-track{background:#07080d}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--cyan),var(--pink));border-radius:6px}
+.badge{display:inline-block;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+.sec{display:block;padding-bottom:0}
+.h-title{font-family:'Unbounded';font-weight:900;font-size:clamp(24px,4vw,42px);line-height:1.15;letter-spacing:-1px;margin-bottom:14px}
+.h-sub{color:var(--mut);font-size:15.5px;line-height:1.7;max-width:560px}
+.center{text-align:center}
+.center .h-sub{margin:0 auto}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* Cursor */
+#curDot,#curRing{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;border-radius:50%;will-change:transform}
+#curDot{width:6px;height:6px;background:#fff;transform:translate(-50%,-50%)}
+#curRing{width:34px;height:34px;border:1.5px solid rgba(255,255,255,.55);transform:translate(-50%,-50%);transition:width .2s,height .2s,border-color .2s,opacity .2s}
+#curRing.big{width:58px;height:58px;border-color:var(--cyan)}
+@media(pointer:coarse){body{cursor:auto}#curDot,#curRing{display:none}button{cursor:pointer}}
+
+/* Ticker */
+.ticker{background:var(--grad);color:#fff;font-weight:800;font-size:12.5px;letter-spacing:1px;text-transform:uppercase;
+  padding:9px 0;overflow:hidden;white-space:nowrap}
+.ticker span{display:inline-block;animation:tick 22s linear infinite}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;
+  max-width:1240px;margin:0 auto;left:0;right:0;padding:16px 24px;transition:.3s}
+nav.scrolled{background:rgba(5,6,10,.78);backdrop-filter:blur(16px);padding:11px 24px;border-bottom:1px solid var(--line);border-radius:0 0 16px 16px}
+.logo{font-family:'Unbounded';font-weight:800;font-size:17px;display:flex;align-items:center;gap:10px}
+.logo .ic{width:32px;height:32px;border-radius:10px;background:var(--grad);display:grid;place-items:center;font-size:15px}
+.logo em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:var(--mut);font-size:13.5px;font-weight:600;transition:.25s;position:relative}
+.nav-links a:hover{color:#fff}
+.nav-links a::after{content:'';position:absolute;left:0;bottom:-6px;width:0;height:2px;background:var(--grad);transition:.3s}
+.nav-links a:hover::after{width:100%}
+.lang-btn{padding:7px 14px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.05);
+  color:var(--txt);font-weight:800;font-size:12.5px;transition:.2s;letter-spacing:.5px}
+.lang-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.cart-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:12px;background:rgba(255,255,255,.06);
+  border:1px solid var(--line);font-weight:800;font-size:13px;transition:.25s;position:relative}
+.cart-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22)}
+.cart-count{position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;padding:0 5px;border-radius:20px;background:var(--pink);
+  font-size:11px;display:grid;place-items:center;font-family:'Manrope'}
+.cart-count:empty{display:none}
+.burger{display:none;font-size:22px;padding:6px}
+.mobile-menu{position:fixed;inset:0;z-index:99;background:rgba(5,6,10,.97);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:26px;transform:translateY(-100%);transition:.35s}
+.mobile-menu.open{transform:translateY(0)}
+.mobile-menu a{font-family:'Unbounded';font-weight:800;font-size:20px;color:var(--mut)}
+.mobile-menu a:hover{color:#fff}
+.mobile-menu .close-btn{position:absolute;top:22px;right:26px;font-size:26px;color:var(--mut)}
+.mobile-menu .lang-btn{font-size:15px;padding:10px 26px}
+@media(max-width:960px){.nav-links{display:none}.burger{display:block}.cart-btn .cart-label{display:none}}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;padding:120px 0 80px;
+  background:radial-gradient(60% 45% at 70% 20%,rgba(124,92,255,.18),transparent 60%),
+             radial-gradient(45% 40% at 15% 80%,rgba(0,229,255,.12),transparent 60%)}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center}
+.hero h1{font-family:'Unbounded';font-weight:900;font-size:clamp(28px,4.6vw,54px);line-height:1.08;letter-spacing:-1px}
+.hero h1 .hl{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--mut);font-size:16px;line-height:1.75;margin:22px 0 30px;max-width:480px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border-radius:14px;font-weight:800;font-size:14.5px;
+  transition:.25s;transform:translateZ(0)}
+.btn.grad{background:var(--grad);color:#fff;box-shadow:0 8px 30px rgba(124,92,255,.35)}
+.btn.grad:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(124,92,255,.5)}
+.btn.ghost{background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--txt)}
+.btn.ghost:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.1)}
+.hero-img{position:relative}
+.hero-mock{background:linear-gradient(160deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:24px;padding:26px;
+  box-shadow:0 40px 90px rgba(0,0,0,.55);transform:rotate(2deg)}
+.hero-mock .bar{height:12px;border-radius:8px;background:rgba(255,255,255,.09);margin-bottom:10px}
+.hero-mock .bar.w60{width:60%}.hero-mock .bar.w80{width:80%}.hero-mock .bar.w40{width:40%}
+.hero-mock .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.hero-mock .tile{height:52px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line);display:grid;place-items:center;font-size:20px}
+.hero-mock .tile:hover{transform:translateY(-3px)}
+.float-card{position:absolute;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 18px;display:flex;gap:12px;align-items:center;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.float-card .f-ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:16px}
+.float-card b{font-size:14px;display:block}
+.float-card small{color:var(--mut);font-size:11.5px}
+.fc1{top:-26px;left:-30px;animation:float 5s ease-in-out infinite}
+.fc2{bottom:10px;right:-24px;animation:float 6s ease-in-out infinite .8s}
+.fc1 .f-ic{background:rgba(61,220,116,.15)}
+.fc2 .f-ic{background:rgba(0,229,255,.15)}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-12px) rotate(1.2deg)}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:60px;max-width:640px}
+.stat{border-left:2px solid var(--line);padding-left:18px}
+.stat b{font-family:'Unbounded';font-size:clamp(20px,2.6vw,30px);background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat small{display:block;color:var(--mut);font-size:12.5px;margin-top:4px;line-height:1.4}
+@media(max-width:900px){
+  .hero .wrap{grid-template-columns:1fr;gap:50px}
+  .hero-img{max-width:420px;margin:0 auto;width:100%}
+  .fc1{left:0}.fc2{right:0}
+  .stats{grid-template-columns:repeat(3,1fr);max-width:100%}
+}
+
+/* Catalog */
+#shop{padding:100px 0}
+.shop-filter{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:34px 0 44px}
+.fbtn{padding:9px 18px;border-radius:30px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--mut);font-size:13px;font-weight:700;transition:.2s}
+.fbtn:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+.fbtn.active{background:var(--grad);color:#fff;border-color:transparent}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.product{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:24px;display:flex;flex-direction:column;position:relative;transition:.3s;overflow:hidden}
+.product::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:0;transition:.3s}
+.product:hover{transform:translateY(-6px);border-color:rgba(124,92,255,.45);box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.product:hover::before{opacity:1}
+.p-ico{width:52px;height:52px;border-radius:15px;background:rgba(124,92,255,.14);display:grid;place-items:center;font-size:24px;margin-bottom:16px}
+.product.hot .p-ico{background:rgba(255,42,109,.14)}
+.product.popular .p-ico{background:rgba(0,229,255,.14)}
+.product h3{font-size:17.5px;font-weight:800;letter-spacing:-.3px}
+.product .desc{color:var(--mut);font-size:13.5px;line-height:1.65;margin:8px 0 14px;flex:1}
+.p-feats{list-style:none;margin-bottom:18px;display:grid;gap:7px}
+.p-feats li{font-size:13px;color:var(--txt);display:flex;gap:9px;align-items:center}
+.p-feats li::before{content:'✓';color:var(--green);font-weight:800}
+.p-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:16px}
+.price b{font-family:'Unbounded';font-size:19px}
+.price small{display:block;color:var(--mut);font-size:11.5px}
+.old{text-decoration:line-through;color:var(--mut);font-size:13px;margin-right:6px;font-weight:600}
+.add-btn{padding:11px 16px;border-radius:12px;font-weight:800;font-size:13px;transition:.2s}
+.add-btn.grad{background:var(--grad);color:#fff}
+.add-btn.ghost{border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--txt)}
+.add-btn:hover{transform:scale(1.05);filter:brightness(1.1)}
+.tag-pop{position:absolute;top:16px;right:16px;background:linear-gradient(120deg,var(--cyan),var(--violet));color:#fff;font-size:10.5px;font-weight:800;padding:5px 11px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase}
+
+/* Benefits */
+#why{padding:100px 0;background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ben-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:48px}
+.ben{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:26px;transition:.3s;position:relative;overflow:hidden}
+.ben:hover{transform:translateY(-5px);border-color:rgba(124,92,255,.45)}
+.ben .num{font-family:'Unbounded';font-size:13px;color:var(--violet);font-weight:800;letter-spacing:2px;opacity:.7}
+.ben .b-ic{font-size:28px;margin:12px 0 14px}
+.ben h4{font-size:15.5px;font-weight:800;margin-bottom:8px}
+.ben p{color:var(--mut);font-size:13px;line-height:1.65}
+
+/* Steps */
+#steps{padding:100px 0}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;margin-top:48px;counter-reset:step}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:28px 24px;position:relative;transition:.3s}
+.step:hover{transform:translateY(-5px);border-color:rgba(0,229,255,.45)}
+.step::before{counter-increment:step;content:'0' counter(step);font-family:'Unbounded';font-weight:900;font-size:34px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:.35}
+.step h4{font-size:15.5px;font-weight:800;margin:14px 0 8px}
+.step p{color:var(--mut);font-size:13px;line-height:1.65}
+
+/* Charity */
+#charity{padding:100px 0;position:relative;
+  background:radial-gradient(50% 60% at 20% 20%,rgba(255,213,79,.1),transparent 60%),
+             radial-gradient(50% 60% at 85% 80%,rgba(61,220,116,.08),transparent 60%)}
+.charity-box{background:linear-gradient(150deg,var(--card),#141a2e);border:1px solid rgba(255,213,79,.25);border-radius:28px;
+  padding:clamp(28px,5vw,64px);display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;position:relative;overflow:hidden}
+.charity-box::after{content:'❤';position:absolute;right:-40px;bottom:-60px;font-size:220px;opacity:.06}
+.charity-box h2{font-family:'Unbounded';font-weight:900;font-size:clamp(22px,3.4vw,34px);line-height:1.2;letter-spacing:-1px;margin-bottom:16px}
+.charity-box p{color:var(--mut);font-size:14.5px;line-height:1.75;max-width:560px}
+.charity-row{display:flex;gap:22px;margin-top:26px;flex-wrap:wrap}
+.charity-stat{text-align:center}
+.charity-stat b{font-family:'Unbounded';font-size:26px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:block}
+.charity-stat small{color:var(--mut);font-size:11.5px}
+.charity-actions{display:flex;flex-direction:column;gap:14px;align-items:stretch;min-width:220px}
+@media(max-width:900px){.charity-box{grid-template-columns:1fr}}
+/* Reviews */
+#reviews{padding:100px 0;background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;margin-top:48px}
+.rev{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:24px}
+.rev .stars{color:var(--gold);letter-spacing:3px;font-size:14px;margin-bottom:14px}
+.rev p{color:#cfd8ec;font-size:14px;line-height:1.7}
+.rev .who{display:flex;align-items:center;gap:12px;margin-top:18px}
+.rev .av{width:40px;height:40px;border-radius:12px;background:var(--grad);display:grid;place-items:center;font-size:15px;font-weight:800}
+.rev .who b{font-size:13.5px;display:block}
+.rev .who small{color:var(--mut);font-size:11.5px}
+
+/* FAQ */
+#faq{padding:100px 0}
+.faq-item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 24px;margin-bottom:12px;transition:.2s}
+.faq-item.open{border-color:rgba(124,92,255,.5)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;cursor:none;font-size:15px;font-weight:800;width:100%;text-align:left}
+.faq-q .plus{font-size:20px;color:var(--cyan);transition:.3s;flex:none;margin-left:14px}
+.faq-item.open .plus{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease;color:var(--mut);font-size:13.5px;line-height:1.7}
+.faq-item.open .faq-a{max-height:300px;margin-top:12px}
+
+/* Order / form */
+#order{padding:100px 0;position:relative;
+  background:radial-gradient(50% 60% at 80% 20%,rgba(255,42,109,.12),transparent 60%),
+             radial-gradient(50% 60% at 15% 80%,rgba(0,229,255,.1),transparent 60%)}
+.order-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:50px;align-items:start;margin-top:48px}
+.order-info h2{font-family:'Unbounded';font-size:clamp(22px,3.5vw,34px);font-weight:900;line-height:1.2;letter-spacing:-1px;margin-bottom:16px}
+.order-info>p{color:var(--mut);font-size:15px;line-height:1.75;margin-bottom:26px}
+.contact-list{list-style:none;display:grid;gap:16px}
+.contact-list li{display:flex;gap:14px;align-items:center}
+.contact-list .ci{width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.06);border:1px solid var(--line);display:grid;place-items:center;font-size:18px;flex:none}
+.contact-list b{display:block;font-size:14.5px}
+.contact-list small{color:var(--mut);font-size:12.5px}
+.form-card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:30px}
+.form-card h3{font-size:18px;font-weight:800;margin-bottom:6px}
+.form-card>.note{color:var(--mut);font-size:12.5px;margin-bottom:20px}
+.ff{margin-bottom:16px}
+.ff label{display:block;font-size:12px;font-weight:800;margin-bottom:7px;color:var(--mut)}
+.ff input,.ff textarea,.ff select{width:100%;padding:13px 15px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);
+  color:var(--txt);font-size:14px;outline:none;transition:.2s;resize:vertical}
+.ff input:focus,.ff textarea:focus,.ff select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,229,255,.12)}
+.ff textarea{min-height:90px}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.send-btn{width:100%;padding:15px;border-radius:13px;background:var(--grad);color:#fff;font-weight:800;font-size:15px;
+  transition:.25s;margin-top:6px}
+.send-btn:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(124,92,255,.4)}
+.form-ok{display:none;text-align:center;padding:40px 20px}
+.form-ok.show{display:block}
+.form-ok .ok-ic{width:70px;height:70px;margin:0 auto 18px;border-radius:50%;background:rgba(61,220,116,.14);border:2px solid var(--green);display:grid;place-items:center;font-size:30px}
+.form-ok h3{font-size:19px;font-weight:800;margin-bottom:8px}
+.form-ok p{color:var(--mut);font-size:13.5px;line-height:1.6}
+@media(max-width:900px){.order-grid{grid-template-columns:1fr;gap:40px}}
+
+/* Footer */
+footer{border-top:1px solid var(--line);padding:50px 0 30px;background:var(--bg2)}
+.f-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:36px;margin-bottom:40px}
+.f-grid h5{font-size:13px;font-weight:800;margin-bottom:16px;letter-spacing:.5px;text-transform:uppercase;color:var(--mut)}
+.f-grid ul{list-style:none;display:grid;gap:10px}
+.f-grid a{color:var(--mut);font-size:13.5px;transition:.2s}
+.f-grid a:hover{color:#fff}
+.f-bot{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--mut);font-size:12.5px}
+@media(max-width:800px){.f-grid{grid-template-columns:1fr 1fr}}
+
+/* Cart drawer */
+.cart-overlay{position:fixed;inset:0;z-index:300;background:rgba(3,4,8,.65);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:.3s}
+.cart-overlay.show{opacity:1;pointer-events:auto}
+.cart{position:fixed;top:0;right:0;bottom:0;width:min(420px,100vw);z-index:301;background:var(--bg2);border-left:1px solid var(--line);
+  transform:translateX(100%);transition:.35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.cart.open{transform:translateX(0)}
+.cart-head{display:flex;justify-content:space-between;align-items:center;padding:20px 22px;border-bottom:1px solid var(--line)}
+.cart-head h3{font-family:'Unbounded';font-size:16px;font-weight:800}
+.cart-close{font-size:20px;color:var(--mut);padding:4px 8px;border-radius:8px}
+.cart-close:hover{background:rgba(255,255,255,.08);color:#fff}
+.cart-list{flex:1;overflow-y:auto;padding:8px 22px}
+.cart-empty{color:var(--mut);font-size:14px;text-align:center;padding:60px 20px;line-height:1.7}
+.c-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.c-item .c-ico{width:46px;height:46px;border-radius:13px;background:rgba(124,92,255,.14);display:grid;place-items:center;font-size:21px;flex:none}
+.c-item .c-name{font-size:13.5px;font-weight:800;display:block;line-height:1.4}
+.c-item .c-price{font-size:13px;color:var(--cyan);font-weight:800;display:block;margin-top:3px}
+.c-item .c-del{margin-left:auto;color:var(--mut);font-size:14px;padding:2px 7px;border-radius:7px;height:fit-content}
+.c-item .c-del:hover{color:#fff;background:rgba(255,42,109,.25)}
+.qty{display:flex;align-items:center;gap:10px;margin-top:8px}
+.qty button{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-size:14px;font-weight:800;color:#fff}
+.qty button:hover{background:var(--violet)}
+.qty span{min-width:20px;text-align:center;font-weight:800;font-size:13px}
+.cart-foot{padding:20px 22px;border-top:1px solid var(--line)}
+.c-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.c-total span{color:var(--mut);font-size:13.5px}
+.c-total b{font-family:'Unbounded';font-size:18px}
+.checkout-btn{width:100%;padding:14px;border-radius:13px;background:var(--grad);color:#fff;font-weight:800;font-size:14.5px;transition:.25s}
+.checkout-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(124,92,255,.4)}
+
+/* Checkout modal */
+.modal-wrap{position:fixed;inset:0;z-index:400;background:rgba(3,4,8,.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+.modal-wrap.show{display:flex}
+.modal{width:100%;max-width:480px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px;max-height:92vh;overflow-y:auto;animation:pop .25s ease}
+@keyframes pop{from{transform:scale(.96) translateY(10px);opacity:0}}
+.modal h3{font-family:'Unbounded';font-size:17px;font-weight:800;margin-bottom:6px}
+.modal .m-note{color:var(--mut);font-size:12.5px;line-height:1.6;margin-bottom:20px}
+.modal-close{position:absolute;top:14px;right:14px;font-size:18px;color:var(--mut)}
+
+/* WA float */
+.wa-float{position:fixed;bottom:24px;left:24px;z-index:200;width:56px;height:56px;border-radius:50%;background:#25d366;display:grid;
+  place-items:center;font-size:27px;box-shadow:0 10px 30px rgba(37,211,102,.4);transition:.25s}
+.wa-float:hover{transform:scale(1.08)}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);z-index:500;background:var(--card2);
+  border:1px solid rgba(61,220,116,.4);color:#e8fff0;padding:13px 22px;border-radius:13px;font-size:13.5px;font-weight:700;
+  opacity:0;pointer-events:none;transition:.3s;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="curDot"></div><div id="curRing"></div>
+
+<div class="ticker" id="ticker"><span id="tickerIn"></span></div>
+
+<nav id="nav">
+  <div class="logo" onclick="location.hash='#top'"><span class="ic">🛒</span><span><em>AMIRELLO</em> Studio</span></div>
+  <div class="nav-links" id="navLinks"></div>
+  <div style="display:flex;gap:12px;align-items:center">
+    <button class="cart-btn" onclick="openCart()">🛒<span class="cart-label" data-i18n="cart"></span><span class="cart-count" id="cartCount"></span></button>
+    <button class="burger" onclick="toggleMenu(true)">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mm">
+  <button class="close-btn" onclick="toggleMenu(false)">✕</button>
+  <a href="#shop">Каталог</a>
+  <a href="#why">Преимущества</a>
+  <a href="#steps">Этапы</a>
+  <a href="#charity">Благотворительность</a>
+  <a href="#reviews">Отзывы</a>
+  <a href="#faq">FAQ</a>
+  <a href="#order">Контакты</a>
+  <button class="btn grad" style="padding:13px 30px;cursor:pointer" onclick="toggleMenu(false);openCart()">🛒 Корзина</button>
+</div>
+
+<!-- Hero -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="badge hero-badge"></span>
+      <h1 style="margin-top:18px" data-i18n="heroTitle"></h1>
+      <p data-i18n="heroSub"></p>
+      <div class="hero-actions">
+        <a class="btn grad" href="#shop" data-i18n="heroBtn1"></a>
+        <a class="btn ghost" href="#order" data-i18n="heroBtn2"></a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>120+</b><small data-i18n="stat1"></small></div>
+        <div class="stat"><b>3 <span data-i18n="stat2day"></span></b><small data-i18n="stat2"></small></div>
+        <div class="stat"><b>98%</b><small data-i18n="stat3"></small></div>
+      </div>
+    </div>
+    <div class="hero-img">
+      <div class="hero-mock">
+        <div class="bar w80"></div><div class="bar w60"></div><div class="bar w40"></div>
+        <div class="grid">
+          <div class="tile">🛍</div><div class="tile">🚀</div><div class="tile">📈</div>
+          <div class="tile">🎨</div><div class="tile">⚡</div><div class="tile">💎</div>
+        </div>
+      </div>
+      <div class="float-card fc1"><span class="f-ic">✅</span><div><b data-i18n="fc1b"></b><small data-i18n="fc1s"></small></div></div>
+      <div class="float-card fc2"><span class="f-ic">🔒</span><div><b data-i18n="fc2b"></b><small data-i18n="fc2s"></small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Catalog -->
+<section class="sec" id="shop">
+  <div class="wrap">
+    <div class="center">
+      <span class="badge filter-badge"></span>
+      <h2 class="h-title" style="margin-top:14px" data-i18n="shopTitle"></h2>
+      <p class="h-sub center-hsub" data-i18n="shopSub"></p>
+    </div>
+    <div class="shop-filter" id="filters"></div>
+    <div class="grid" id="catalog"></div>
+  </div>
+</section>
+
+<!-- Benefits -->
+<section class="sec" id="why">
+  <div class="wrap">
+    <div class="center">
+      <span class="badge bens-badge"></span>
+      <h2 class="h-title" style="margin-top:14px" data-i18n="bensTitle"></h2>
+    </div>
+    <div class="ben-grid" id="bens"></div>
+  </div>
+</section>
+
+<!-- Steps -->
+<section class="sec" id="steps">
+  <div class="wrap">
+    <div class="center">
+      <span class="badge steps-badge"></span>
+      <h2 class="h-title" style="margin-top:14px" data-i18n="stepsTitle"></h2>
+    </div>
+    <div class="steps-grid" id="stepsGrid"></div>
+  </div>
+</section>
+
+<!-- Charity -->
+<section class="sec" id="charity">
+  <div class="wrap">
+    <div class="charity-box">
+      <div>
+        <span class="badge" style="background:rgba(255,213,79,.13);color:var(--gold);border:1px solid rgba(255,213,79,.4)" data-i18n="charityBadge"></span>
+        <h2 style="margin-top:14px" data-i18n="charityTitle"></h2>
+        <p data-i18n="charityText"></p>
+        <div class="charity-row">
+          <div class="charity-stat"><b>10%</b><small data-i18n="charityStat1"></small></div>
+          <div class="charity-stat"><b>$1,240</b><small data-i18n="charityStat2"></small></div>
+          <div class="charity-stat"><b>28</b><small data-i18n="charityStat3"></small></div>
+        </div>
+      </div>
+      <div class="charity-actions">
+        <a class="btn grad" href="https://wa.me/998900153320?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BF%D0%BE%D0%BC%D0%BE%D1%87%D1%8C%20%D0%B1%D0%BB%D0%B0%D0%B3%D0%BE%D1%82%D0%B2%D0%BE%D1%80%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D1%81%D1%82%D0%B8" target="_blank" rel="noopener">💛 <span data-i18n="charityBtn"></span></a>
+        <a class="btn ghost" href="#order" data-i18n="charityBtn2"></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section class="sec" id="reviews">
+  <div class="wrap">
+    <div class="center">
+      <span class="badge revs-badge"></span>
+      <h2 class="h-title" style="margin-top:14px" data-i18n="revsTitle"></h2>
+    </div>
+    <div class="rev-grid" id="revs"></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="center">
+      <span class="badge faq-badge"></span>
+      <h2 class="h-title" style="margin-top:14px" data-i18n="faqTitle"></h2>
+    </div>
+    <div style="max-width:760px;margin:44px auto 0" id="faqList"></div>
+  </div>
+</section>
+
+<!-- Order -->
+<section class="sec" id="order">
+  <div class="wrap">
+    <div class="center">
+      <span class="badge order-badge"></span>
+      <h2 class="h-title" style="margin-top:14px" data-i18n="orderTitle"></h2>
+    </div>
+    <div class="order-grid">
+      <div class="order-info">
+        <h2 data-i18n="orderBig"></h2>
+        <p data-i18n="orderText"></p>
+        <ul class="contact-list">
+          <li><span class="ci">📱</span><div><b>+998 90 015 33 20</b><small data-i18n="contactPh"></small></div></li>
+          <li><span class="ci">✉️</span><div><b>amirmaxmudov7777@gmail.com</b><small data-i18n="contactMail"></small></div></li>
+          <li><span class="ci">🕘</span><div><b data-i18n="hours"></b><small data-i18n="hoursSub"></small></div></li>
+        </ul>
+      </div>
+      <div class="form-card">
+        <div id="formBox">
+          <h3 data-i18n="formTitle"></h3>
+          <p class="note" data-i18n="formNote"></p>
+          <form id="orderForm" onsubmit="submitOrder(event)">
+            <div class="ff"><label data-i18n="fNameL"></label><input id="fName" type="text" required></div>
+            <div class="f-row">
+              <div class="ff"><label data-i18n="fPhoneL"></label><input id="fPhone" type="tel" required></div>
+              <div class="ff"><label data-i18n="fTypeL"></label><select id="fType"></select></div>
+            </div>
+            <div class="ff"><label data-i18n="fChannelL"></label>
+              <select id="fChannel"><option>WhatsApp</option><option>Telegram</option><option>Discord</option></select>
+            </div>
+            <div class="ff"><label data-i18n="fMsgL"></label><textarea id="fMsg"></textarea></div>
+            <button class="send-btn" type="submit" data-i18n="fSend"></button>
+          </form>
+        </div>
+        <div class="form-ok" id="formOk">
+          <div class="ok-ic">✓</div>
+          <h3 data-i18n="okTitle"></h3>
+          <p id="formOkText"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <div class="logo"><span class="ic">🛒</span><span><em>AMIRELLO</em> Studio</span></div>
+        <p style="color:var(--mut);font-size:13.5px;line-height:1.7;margin-top:14px;max-width:280px" data-i18n="footAbout"></p>
+      </div>
+      <div><h5 data-i18n="footCat"></h5><ul id="footCat"></ul></div>
+      <div><h5 data-i18n="footCo"></h5><ul><li><a href="#why"></a></li><li><a href="#steps"></a></li><li><a href="#reviews"></a></li><li><a href="#faq"></a></li></ul></div>
+      <div><h5 data-i18n="footCtc"></h5><ul>
+        <li><a href="tel:+998900153320">+998 90 015 33 20</a></li>
+        <li><a href="mailto:amirmaxmudov7777@gmail.com">amirmaxmudov7777@gmail.com</a></li>
+        <li><a href="#order">WhatsApp / Telegram / Discord</a></li>
+      </ul></div>
+    </div>
+    <div class="f-bot">
+      <span>© 2026 AMIRELLO Studio.</span>
+      <span data-i18n="footGuar"></span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/998900153320" target="_blank" rel="noopener">🟢</a>
+
+<!-- Cart drawer -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<aside class="cart" id="cart">
+  <div class="cart-head"><h3>🛒 <span data-i18n="cart"></span></h3><button class="cart-close" onclick="closeCart()">✕</button></div>
+  <div class="cart-list" id="cartList"></div>
+  <div class="cart-foot" id="cartFoot">
+    <div class="c-total"><span data-i18n="cartTotal"></span><b id="cartTotal">$0</b></div>
+    <button class="checkout-btn" onclick="openCheckout()" data-i18n="checkoutBtn"></button>
+  </div>
+</aside>
+
+<!-- Checkout modal -->
+<div class="modal-wrap" id="cModal">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeCheckout()">✕</button>
+    <h3 data-i18n="coTitle"></h3>
+    <p class="m-note" data-i18n="coNote"></p>
+    <div id="orderSummary" style="background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:18px;font-size:13px;color:#cfd8ec;display:grid;gap:6px"></div>
+    <form id="checkoutForm" onsubmit="submitCheckout(event)">
+      <div class="ff"><label data-i18n="fNameL"></label><input id="oName" required></div>
+      <div class="ff"><label data-i18n="fPhoneL"></label><input id="oPhone" required></div>
+      <div class="ff"><label data-i18n="fChannelL"></label>
+        <select id="oChannel"><option>WhatsApp</option><option>Telegram</option><option>Discord</option></select>
+      </div>
+      <div class="ff"><label data-i18n="fMsgL"></label><textarea id="oMsg"></textarea></div>
+      <button class="send-btn" type="submit" data-i18n="coSubmit"></button>
+    </form>
+    <div style="font-size:11.5px;color:var(--mut);margin-top:12px;text-align:center" data-i18n="coFine"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= Язык / i18n ================= */
+const L={
+ru:{
+  langBtn:'EN',
+  catalog:'Каталог',benefits:'Преимущества',steps:'Этапы',charityNav:'Благотворительность',reviews:'Отзывы',faq:'Вопросы',contact:'Контакты',
+  heroBadge:'⏱ Срок от 3 дней',heroTitle:'Магазин <span class="hl">готовых сайтов</span>, которые продают',
+  heroSub:'Лендинги, корпоративные сайты и интернет-магазины под ключ. Выбираете в каталоге, добавляете в корзину — заказ оформляем за день и делаем за 3–14 дней.',
+  heroBtn1:'🛒 Выбрать сайт',heroBtn2:'📩 Индивидуальный заказ',
+  stat1:'сайтов продано',stat2day:'дня',stat2:'минимальный срок',stat3:'клиентов рекомендуют',
+  fc1b:'Запуск за 3 дня',fc1s:'с сайтом или без макета',fc2b:'Гарантия 12 мес.',fc2s:'бесплатные правки',
+  shopBadge:'Каталог',shopTitle:'Выберите сайт <span class="grad-text">под задачу</span>',
+  shopSub:'Все тарифы включают дизайн, адаптив, домен, хостинг на 1 год и настройку аналитики.',
+  bensBadge:'Почему мы',bensTitle:'Покупать сайт у нас <span class="grad-text">выгодно</span>',
+  stepsBadge:'Как это работает',stepsTitle:'4 шага до запуска',
+  charityBadge:'Благотворительность',
+  charityTitle:'Помогаем — <span class="grad-text">вместе с вами</span>',
+  charityText:'С каждого заказа мы перечисляем 10% в фонд помощи детям. Ваша покупка сайта делает доброе дело — просто, без лишних действий с вашей стороны.',
+  charityStat1:'с каждого заказа',charityStat2:'передано фондам',charityStat3:'детей получили помощь',
+  charityBtn:'Хочу помочь',charityBtn2:'Сделать заказ',
+  revsBadge:'Отзывы',revsTitle:'Нам доверяют',
+  faqBadge:'Вопросы',faqTitle:'Частые вопросы',
+  orderBadge:'Связь',orderTitle:'Оставьте заявку',
+  orderBig:'Сайт под ключ за <span class="grad-text">3 дня</span> — с нуля до запуска',
+  orderText:'Отвечаем в течение 15 минут в рабочее время. Консультация и смета — бесплатно, ни к чему не обязывают.',
+  contactPh:'WhatsApp / Telegram, звонки',contactMail:'напишите нам на почту',
+  hours:'Пн–Пт 09:00–20:00',hoursSub:'Сб 10:00–16:00',
+  formTitle:'Получить предложение',formNote:'Заполните форму — пришлём смету и сроки в WhatsApp или Telegram.',
+  fNameL:'Как вас зовут *',fPhoneL:'Телефон / WhatsApp *',fTypeL:'Что нужно *',fChannelL:'Куда прислать ответ',fMsgL:'Комментарий',
+  fSend:'🚀 Отправить заявку',okTitle:'Заявка отправлена!',
+  footAbout:'Создаём сайты и интернет-магазины, которые приносят заявки. Работаем по всему миру.',
+  footCat:'Каталог',footCo:'Компания',footCtc:'Контакты',footGuar:'За сайт отвечаем гарантией 12 месяцев',
+  cart:'Корзина',cartEmpty:'Корзина пуста.<br>Добавьте сайт из каталога 🛒',
+  cartTotal:'Итого:',checkoutBtn:'Оформить заказ →',
+  coTitle:'Оформление заказа',coNote:'Ваш список:',coSubmit:'✅ Подтвердить заказ',
+  coFine:'Нажимая кнопку, вы подтверждаете заказ. Свяжемся в течение 15 минут.',
+  addCart:'В корзину',added:'✓ Добавлено',underKey:'под ключ',perMonth:'/мес',
+  filters:['Все','Сайты','Магазины','Услуги'],
+  types:['Лендинг','Корпоративный сайт','Интернет-магазин','Сайт-визитка','SEO / продвижение','Другое'],
+  orderNew:'🛒 *НОВЫЙ ЗАКАЗ*',leadNew:'🚀 *ЗАЯВКА С САЙТА*',contact:'Связаться',
+  total:'Итого:',sendTo:'Отправлено',wait:'Ожидайте ответ в течение 15 минут.',
+  toastAdded:'✅ «{name}» в корзине',toastCartEmpty:'Корзина пуста!',toastFill:'⚡ Заполните имя и телефон',
+  toastOrder:'✅ Заказ отправлен',toastLead:'✅ Заявка отправлена',
+  chatOpen:'Открыт',in15:'мы ответим в течение 15 минут.',
+  orderMsg:'Номер заказа #{id}'
+},
+en:{
+  langBtn:'RU',
+  catalog:'Shop',benefits:'Benefits',steps:'Process',charityNav:'Charity',reviews:'Reviews',faq:'FAQ',contact:'Contact',
+  heroBadge:'⏱ Ready in 3 days',heroTitle:'Where ready-made <span class="hl">websites</span> sell',
+  heroSub:'Landing pages, corporate sites and online stores turnkey. Pick from the catalog, add to cart — we start the same day and deliver in 3–14 days.',
+  heroBtn1:'🛒 Choose a website',heroBtn2:'📩 Custom order',
+  stat1:'websites sold',stat2day:'days',stat2:'minimum delivery',stat3:'clients recommend us',
+  fc1b:'Launch in 3 days',fc1s:'with or without your design',fc2b:'12-month warranty',fc2s:'free revisions',
+  shopBadge:'Catalog',shopTitle:'Pick a website <span class="grad-text">for your goal</span>',
+  shopSub:'Every plan includes design, mobile version, domain, 1 year hosting and analytics setup.',
+  bensBadge:'Why us',bensTitle:'Buying from us <span class="grad-text">pays off</span>',
+  stepsBadge:'How it works',stepsTitle:'4 steps to launch',
+  charityBadge:'Charity',
+  charityTitle:'We give back — <span class="grad-text">together with you</span>',
+  charityText:'10% of every order goes to a children’s charity fund. Buying a website from us does good — simply, with zero extra effort from you.',
+  charityStat1:'of every order',charityStat2:'donated to funds',charityStat3:'children supported',
+  charityBtn:'I want to help',charityBtn2:'Place an order',
+  revsBadge:'Reviews',revsTitle:'People trust us',
+  faqBadge:'FAQ',faqTitle:'Frequently asked',
+  orderBadge:'Contact',orderTitle:'Leave a request',
+  orderBig:'Turnkey website in <span class="grad-text">3 days</span> — from zero to launch',
+  orderText:'We reply within 15 minutes during working hours. Consultation and estimate are free, with no obligation.',
+  contactPh:'WhatsApp / Telegram, calls',contactMail:'write to us by email',
+  hours:'Mon–Fri 9:00–20:00',hoursSub:'Sat 10:00–16:00',
+  formTitle:'Get an offer',formNote:'Fill in the form — we’ll send the estimate and timeline via WhatsApp or Telegram.',
+  fNameL:'Your name *',fPhoneL:'Phone / WhatsApp *',fTypeL:'What you need *',fChannelL:'Where to send the reply',fMsgL:'Comment',
+  fSend:'🚀 Send request',okTitle:'Request sent!',
+  footAbout:'We build websites and online stores that bring real leads. Serving clients worldwide.',
+  footCat:'Catalog',footCo:'Company',footCtc:'Contacts',footGuar:'Every website comes with a 12-month warranty',
+  cart:'Cart',cartEmpty:'Your cart is empty.<br>Add a website from the catalog 🛒',
+  cartTotal:'Total:',checkoutBtn:'Checkout →',
+  coTitle:'Checkout',coNote:'Your order:',coSubmit:'✅ Confirm order',
+  coFine:'By clicking you confirm the order. We’ll reach out within 15 minutes.',
+  addCart:'Add to cart',added:'✓ Added',underKey:'turnkey',perMonth:'/mo',
+  filters:['All','Websites','Stores','Services'],
+  types:['Landing','Corporate website','Online store','Business card site','SEO / promotion','Other'],
+  orderNew:'🛒 *NEW ORDER*',leadNew:'🚀 *LEAD FROM WEBSITE*',contact:'Contact',
+  total:'Total:',sendTo:'Sent',wait:'We’ll reply within 15 minutes.',
+  toastAdded:'✅ “{name}” added to cart',toastCartEmpty:'Cart is empty!',toastFill:'⚡ Please fill in name and phone',
+  toastOrder:'✅ Order sent',toastLead:'✅ Request sent',
+  chatOpen:'Opened',in15:'we reply within 15 minutes.',
+  orderMsg:'Order # {id}'
+}};
+let lang=localStorage.getItem('shop_lang')||'ru';
+const T=k=>L[lang][k]||L.ru[k]||'';
+function setLang(l){
+  lang=l;localStorage.setItem('shop_lang',l);
+  document.documentElement.lang=l;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.dataset.i18n; const v=T(k);
+    if(el.tagName==='TITLE'){}
+    else el.innerHTML=v;
+  });
+  document.getElementById('langBtn').textContent=T('langBtn');
+  renderAll();
+}
+function toggleLang(){setLang(lang==='ru'?'en':'ru')}
+
+/* ================= Константы контента (двуязычные) ================= */
+const PRODUCTS=[
+  {id:1, cat:'sites', bud:'hit', emoji:'🚀', price:10, old:19,
+   ru:{name:'Сайт-визитка',desc:'Одна страница: о компании, услуги, контакты и кнопка связи. Идеален для старта.',feats:['Дизайн в фирменном стиле','Адаптив под все устройства','Домен + хостинг 1 год','Онлайн-заявки на почту']},
+   en:{name:'Business card site',desc:'One page: about you, services, contacts and a contact button. Perfect to start.',feats:['Brand design','Mobile friendly','Domain + 1 year hosting','Online lead forms']}},
+  {id:2, cat:'sites', bud:'popular', emoji:'📈', price:20, old:39,
+   ru:{name:'Лендинг под продажи',desc:'Страница, заточенная под конверсию: заголовок, оффер, преимущества, форма заявки.',feats:['Продающая структура','Форма заявки + WhatsApp','Настройка аналитики','Базовая SEO-оптимизация']},
+   en:{name:'Sales landing page',desc:'A page built for conversion: headline, offer, benefits and a lead form.',feats:['Conversion-focused structure','Lead form + WhatsApp','Analytics setup','Basic SEO']}},
+  {id:3, cat:'sites', bud:'business', emoji:'🏢', price:40, old:75,
+   ru:{name:'Корпоративный сайт',desc:'До 10 страниц: главная, услуги, о компании, новости, контакты. Модульная система.',feats:['До 10 уникальных страниц','Редактирование без программиста','Блог и новости','Интеграция с CRM']},
+   en:{name:'Corporate website',desc:'Up to 10 pages: home, services, about, news, contacts. Modular system.',feats:['Up to 10 unique pages','No-coder editing','Blog & news','CRM integration']}},
+  {id:4, cat:'shops', bud:'popular', emoji:'🛍', price:100, old:180,
+   ru:{name:'Интернет-магазин',desc:'Полноценный магазин: каталог, корзина, оплата, доставка и личный кабинет покупателя.',feats:['Каталог + фильтры','Корзина и онлайн-оплата','Личный кабинет','Обучение администрированию']},
+   en:{name:'Online store',desc:'A full store: catalog, cart, payments, delivery and a customer account.',feats:['Catalog + filters','Cart & online payment','Customer account','Admin training']}},
+  {id:5, cat:'shops', bud:'', emoji:'🛒', price:49, old:89,
+   ru:{name:'Магазин «Лайт»',desc:'Мини-витрина до 50 товаров с заказами в WhatsApp. Быстрый старт продаж.',feats:['Каталог до 50 товаров','Заказы в WhatsApp','Мобильная версия','Хостинг 1 год']},
+   en:{name:'Store “Lite”',desc:'A mini showcase of up to 50 products with WhatsApp orders. Quick sales start.',feats:['Up to 50 products','WhatsApp orders','Mobile version','1 year hosting']}},
+  {id:6, cat:'shops', bud:'', emoji:'🌐', price:79, old:140,
+   ru:{name:'Магазин на маркетплейс',desc:'Подключим магазин к крупным маркетплейсам и настроим выгрузку товаров.',feats:['Интеграция с WB/Ozon','Автовыгрузка товаров','Остатки и цены','Поддержка 2 мес.']},
+   en:{name:'Marketplace store',desc:'We connect your store to major marketplaces and set up product feeds.',feats:['WB/Ozon integration','Auto product feed','Stock & prices sync','2 months support']}},
+  {id:7, cat:'services', bud:'', emoji:'⭐', price:30, old:59,
+   ru:{name:'Дизайн сайта',desc:'Отдельно: дизайн лендинга или интерфейса для вашего проекта.',feats:['До 3 концепций','Разработка прототипа','Исходники в Figma','Правки 3 круга']},
+   en:{name:'Website design',desc:'Standalone design for a landing page or an interface for your project.',feats:['Up to 3 concepts','Prototype','Figma files','3 rounds of revisions']}},
+  {id:8, cat:'services', bud:'', emoji:'🔍', price:25, old:49, every:true,
+   ru:{name:'SEO-продвижение',desc:'Выведем сайт в топ Google: технический аудит, оптимизация, ссылки, отчёты.',feats:['Аудит и стратегия','Оптимизация страниц','Работа со ссылками','Ежемесячный отчёт']},
+   en:{name:'SEO promotion',desc:'Google top ranking: technical audit, optimization, links, reports.',feats:['Audit & strategy','Page optimization','Link building','Monthly reports']}},
+  {id:9, cat:'services', bud:'', emoji:'🛠', price:10, old:19, every:true,
+   ru:{name:'Поддержка сайта',desc:'Сайт всегда работает: обновления, бэкапы, правки, защита от взлома.',feats:['Обновления и бэкапы','Правки контента 5/мес','Мониторинг 24/7','Приоритетная поддержка']},
+   en:{name:'Website care',desc:'Your site always works: updates, backups, edits, security.',feats:['Updates & backups','5 content edits/mo','24/7 monitoring','Priority support']}}
+];
+const BADGES={
+  hit:{ru:'Хит',en:'Hot'},popular:{ru:'Хит продаж',en:'Bestseller'},business:{ru:'Бизнес',en:'Business'}
+};
+const BENEFITS=[
+ {ic:'⚡',ru:{t:'Скорость запуска',p:'Готовые решения начинаем сразу. Лендинг — за 3 дня, магазин — за 14.'},en:{t:'Fast delivery',p:'Ready-made solutions start right away. Landing — 3 days, store — 14.'}},
+ {ic:'💰',ru:{t:'Фиксированная цена',p:'Смета не меняется в процессе. Оплата по этапам, без скрытых платежей.'},en:{t:'Fixed price',p:'Estimate never changes mid-project. Stage payments, no hidden fees.'}},
+ {ic:'🎨',ru:{t:'Дизайн под ваш бренд',p:'Не используем шаблоны «как у всех»: адаптируем под стиль и задачу.'},en:{t:'Design for your brand',p:'No “cookie-cutter” templates — we adapt to your style and goal.'}},
+ {ic:'🔒',ru:{t:'Гарантия 12 месяцев',p:'Бесплатные правки и поддержка целый год после запуска.'},en:{t:'12-month warranty',p:'Free revisions and support for a full year after launch.'}},
+ {ic:'📱',ru:{t:'Работает на телефоне',p:'Адаптив под все устройства — 80% клиентов заходят с мобильного.'},en:{t:'Mobile ready',p:'Adapts to every device — 80% of visitors come from mobile.'}},
+ {ic:'📊',ru:{t:'Нацелен на заявки',p:'Структура, тексты и формы заточены под продажи, а не просто «красиво».'},en:{t:'Built for leads',p:'Structure, copy and forms are engineered for sales, not just looks.'}},
+ {ic:'🏁',ru:{t:'Помощь после запуска',p:'Настроим рекламу, аналитику и научим пользоваться сайтом.'},en:{t:'Post-launch help',p:'We set up ads, analytics and teach you how to use the site.'}},
+ {ic:'🤝',ru:{t:'Своя команда',p:'Дизайнер, программист, SEO-специалист — всё внутри, без подрядчиков.'},en:{t:'In-house team',p:'Designer, developer, SEO — all in-house, no contractors.'}}
+];
+const STEPS=[
+ {ru:{t:'Заявка и консультация',p:'Обсуждаем задачу, сроки и бюджет. Пришлём смету бесплатно.'},en:{t:'Request & consult',p:'We discuss scope, timeline and budget. Free estimate.'}},
+ {ru:{t:'Дизайн и структура',p:'Утверждаем прототип и визуал, вносим правки до фиксации.'},en:{t:'Design & structure',p:'We approve the prototype and visuals, revising until sign-off.'}},
+ {ru:{t:'Разработка',p:'Собираем сайт, наполняем текстами, подключаем домен и оплату.'},en:{t:'Development',p:'We build the site, fill it with content, connect domain and payments.'}},
+ {ru:{t:'Запуск и поддержка',p:'Публикуем, настраиваем аналитику и помогаем с продвижением.'},en:{t:'Launch & support',p:'We publish, set up analytics and help with promotion.'}}
+];
+const REVIEWS=[
+ {stars:'★★★★★',ru:{t:'Заказывали интернет-магазин. Запустили через 2 недели, первая продажа уже на третий день. Смету держали, ничего не «добирали».',n:'Азиз',r:'Магазин стройматериалов'},en:{t:'Ordered an online store. Launched in 2 weeks, first sale by day three. They kept the estimate — no extra charges.',n:'Aziz',r:'Building materials store'}},
+ {stars:'★★★★★',ru:{t:'Сделали лендинг за 3 дня. Кандидаты теперь приходят с сайта — втрое больше заявок.',n:'Малика',r:'Кадровое агентство'},en:{t:'Landing page done in 3 days. Candidates now come from the site — triple the leads.',n:'Malika',r:'HR agency'}},
+ {stars:'★★★★☆',ru:{t:'Долго выбирали подрядчика. Здесь понравилось, что сначала показали дизайн и только потом взяли предоплату.',n:'Тимур',r:'Фитнес-студия'},en:{t:'Took long to pick a vendor. Liked that they showed the design before asking for deposit.',n:'Timur',r:'Fitness studio'}},
+ {stars:'★★★★★',ru:{t:'Сайт на поддержке уже полгода. Правки за день, всегда на связи в WhatsApp. Рекомендую.',n:'Сардор',r:'Кофейня'},en:{t:'Site on our care plan for six months. Edits in a day, always in touch on WhatsApp. Recommend.',n:'Sardor',r:'Coffee shop'}},
+ {stars:'★★★★★',ru:{t:'Сделали корпоративный сайт с блогом. Сами обновляем новости без программиста.',n:'Дилноза',r:'IT-компания'},en:{t:'Corporate site with a blog. We update news ourselves — no developer needed.',n:'Dilnoza',r:'IT company'}},
+ {stars:'★★★★★',ru:{t:'SEO-продвижение вывело на 1-ю страницу Google за 4 месяца. Отчёты каждый месяц.',n:'Ёдгор',r:'Логистика'},en:{t:'SEO got us to Google page one in 4 months. Monthly reports.',n:'Yodgor',r:'Logistics'}}
+];
+const FAQ=[
+ {ru:{q:'Сколько стоит сайт?',a:'От $10 за сайт-визитку до $100 за интернет-магазин. Индивидуальную смету пришлём бесплатно — напишите в форме ниже.'},en:{q:'How much does a website cost?',a:'From $10 for a business card site to $100 for an online store. Free custom estimate — just fill the form below.'}},
+ {ru:{q:'Как быстро сделаете?',a:'Лендинг — от 3 дней, корпоративный сайт — 7–10 дней, интернет-магазин — до 14 дней. Срок фиксируем в договоре.'},en:{q:'How fast can you build it?',a:'Landing — from 3 days, corporate site — 7–10 days, online store — up to 14 days. Timeline is fixed in the contract.'}},
+ {ru:{q:'Что входит в цену?',a:'Дизайн, программирование, адаптив, домен и хостинг на 1 год, аналитика и 12 месяцев гарантийной поддержки.'},en:{q:'What’s included in the price?',a:'Design, development, mobile version, domain and 1 year hosting, analytics and 12 months of warranty support.'}},
+ {ru:{q:'Как проходит оплата?',a:'Предоплата 30% после утверждения макета, остальное — при сдаче сайта. Возможна рассрочка.'},en:{q:'How does payment work?',a:'30% deposit after the design is approved, the rest on delivery. Installments available.'}},
+ {ru:{q:'Что если сайт не понравится?',a:'Правки вносим до фиксации макета бесплатно. Если на этапе дизайна что-то не заходит — вернём предоплату.'},en:{q:'What if I don’t like the result?',a:'Revisions before design sign-off are free. If the design stage isn’t working — we refund the deposit.'}},
+ {ru:{q:'Вы помогаете с продвижением?',a:'Да: SEO-продвижение ($25/мес) и настройка рекламы после запуска. Подробнее в форме заявки.'},en:{q:'Do you help with promotion?',a:'Yes: SEO ($25/mo) and ad setup after launch. More in the request form.'}}
+];
+const TICK=[
+ {ru:'Разработка от 3 дней',en:'Build from 3 days'},{ru:'Интернет-магазины под ключ',en:'Turnkey online stores'},
+ {ru:'Дизайн в подарок',en:'Free design'},{ru:'Гарантия 12 месяцев',en:'12-month warranty'},
+ {ru:'SEO-продвижение',en:'SEO promotion'},{ru:'Скорость 90+ PageSpeed',en:'Speed 90+ PageSpeed'},
+ {ru:'120+ сайтов продано',en:'120+ websites sold'},{ru:'Адаптив под все устройства',en:'Mobile friendly'}
+];
+const FOOT_CAT=[
+ {href:'#shop',ru:'Лендинги',en:'Landings'},{href:'#shop',ru:'Корпоративные сайты',en:'Corporate sites'},
+ {href:'#shop',ru:'Интернет-магазины',en:'Online stores'},{href:'#shop',ru:'SEO и поддержка',en:'SEO & care'}
+];
+
+/* ================= Cursor ================= */
+const d=c=>{document.getElementById('curDot').style.transform='translate(-50%,-50%) translate('+c.clientX+'px,'+c.clientY+'px)'};
+const r=c=>{const ring=document.getElementById('curRing');ring.style.transform='translate(-50%,-50%) translate('+c.clientX+'px,'+c.clientY+'px)'};
+document.addEventListener('mousemove',e=>{d(e);r(e)});
+document.querySelectorAll('a,button,.chip,.tile,.faq-q').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.getElementById('curRing').classList.add('big'));
+  el.addEventListener('mouseleave',()=>document.getElementById('curRing').classList.remove('big'));
+});
+
+/* ================= Nav ================= */
+document.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40));
+function toggleMenu(v){document.getElementById('mm').classList.toggle('open',v)}
+
+/* ================= Utilities ================= */
+const WA_NUM='998900153320';
+function fmt(n){return '$'+n.toLocaleString('en-US')}
+function $v(id){return document.getElementById(id).value.trim()}
+let toastTimer;
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600)}
+
+/* ================= Render ================= */
+function renderTicker(){
+  document.getElementById('tickerIn').innerHTML = TICK.map(t=>'&nbsp;•&nbsp;'+t[lang]).join('')+'&nbsp;•&nbsp;';
+  const el=document.getElementById('tickerIn');el.style.animation='none';void el.offsetWidth;el.style.animation='';
+}
+const filterKeys=['all','sites','shops','services'];
+function renderFilters(){
+  document.getElementById('filters').innerHTML = T('filters').map((f,i)=>
+    `<button class="fbtn ${i===0?'active':''}" data-f="${filterKeys[i]}" onclick="setFilter('${filterKeys[i]}',this)">${f}</button>`).join('');
+}
+function setFilter(f,btn){
+  document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');renderCatalog(f);
+}
+function productHTML(p){
+  const t=p[lang];
+  const badge = p.bud ? `<span class="tag-pop">${BADGES[p.bud][lang]}</span>` : '';
+  const oldP = p.old ? `<small class="old">${fmt(p.old)}</small>` : '';
+  const per = p.every ? T('perMonth') : '';
+  return `<div class="product ${p.bud?('product.'+p.bud):''}">
+    ${badge}
+    <div class="p-ico">${p.emoji}</div>
+    <h3>${t.name}</h3>
+    <p class="desc">${t.desc}</p>
+    <ul class="p-feats">${t.feats.map(f=>`<li>${f}</li>`).join('')}</ul>
+    <div class="p-foot">
+      <div class="price">${oldP}<b>${fmt(p.price)+per}</b><small>${T('underKey')}${per?' · '+per+'':''}</small></div>
+      <button class="add-btn ${inCart(p.id)?'ghost':''}" onclick="addToCart(${p.id},this)">${inCart(p.id)?'✓':(T('addCart'))}</button>
+    </div>
+  </div>`;
+}
+function renderCatalog(filter){
+  filter=filter||'all';
+  const list=PRODUCTS.filter(p=>filter==='all'||p.cat===filter);
+  document.getElementById('catalog').innerHTML=list.map(productHTML).join('');
+}
+function renderBens(){document.getElementById('bens').innerHTML=BENEFITS.map((b,i)=>
+  `<div class="ben"><div class="num">/0${i+1}</div><div class="b-ic">${b.ic}</div><h4>${b[lang].t}</h4><p>${b[lang].p}</p></div>`).join('')}
+function renderSteps(){document.getElementById('stepsGrid').innerHTML=STEPS.map(s=>
+  `<div class="step"><h4>${s[lang].t}</h4><p>${s[lang].p}</p></div>`).join('')}
+function renderRevs(){document.getElementById('revs').innerHTML=REVIEWS.map(rr=>
+  `<div class="rev"><div class="stars">${rr.stars}</div><p>${rr[lang].t}</p><div class="who"><span class="av">${rr[lang].n[0]}</span><div><b>${rr[lang].n}</b><small>${rr[lang].r}</small></div></div></div>`).join('')}
+function renderFaq(){
+  document.getElementById('faqList').innerHTML=FAQ.map((f,i)=>
+    `<div class="faq-item" id="faq${i}">
+       <button class="faq-q" onclick="toggleFaq(${i})">${f[lang].q}<span class="plus">+</span></button>
+       <div class="faq-a">${f[lang].a}</div>
+     </div>`).join('');
+}
+function toggleFaq(i){
+  const el=document.getElementById('faq'+i);
+  const was=el.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(x=>x.classList.remove('open'));
+  if(!was)el.classList.add('open');
+}
+function renderNavLinks(){
+  const items=[['#shop',T('catalog')],['#why',T('benefits')],['#steps',T('steps')],['#charity',T('charityNav')],['#reviews',T('reviews')],['#faq',T('faq')],['#order',T('contact')]];
+  document.getElementById('navLinks').innerHTML=items.map(([h,t])=>`<a href="${h}">${t}</a>`).join('')+
+    `<button class="lang-btn" id="langBtn" onclick="toggleLang()">${T('langBtn')}</button>`;
+}
+function renderFoot(){
+  document.getElementById('footCat').innerHTML=FOOT_CAT.map(f=>`<li><a href="${f.href}">${f[lang]}</a></li>`).join('');
+  const els=[...document.querySelectorAll('#footCo ul a')];
+  const labs=[T('benefits'),T('steps'),T('reviews'),T('faq')];
+  els.forEach((el,i)=>{if(labs[i])el.textContent=labs[i]});
+}
+function renderTypes(){
+  document.getElementById('fType').innerHTML=T('types').map(t=>`<option>${t}</option>`).join('');
+}
+function setStaticBadges(){
+  const badges=[['.hero-badge',T('heroBadge'),'rgba(0,229,255,.12)', 'var(--cyan)','rgba(0,229,255,.3)'],
+    ['.filter-badge',T('shopBadge')],['.bens-badge',T('bensBadge')],['.steps-badge',T('stepsBadge')],
+    ['.revs-badge',T('revsBadge')],['.faq-badge',T('faqBadge')],['.order-badge',T('orderBadge')]];
+  const palette=[['rgba(124,92,255,.14)','#a68bff','rgba(124,92,255,.4)'],['rgba(255,42,109,.14)','#ff87a0','rgba(255,42,109,.4)'],
+    ['rgba(61,220,116,.13)','#6fe8a0','rgba(61,220,116,.4)'],['rgba(255,213,79,.13)','var(--gold)','rgba(255,213,79,.4)'],
+    ['rgba(0,229,255,.12)','var(--cyan)','rgba(0,229,255,.3)'],['rgba(124,92,255,.14)','#a68bff','rgba(124,92,255,.4)'],['rgba(255,42,109,.14)','#ff87a0','rgba(255,42,109,.4)']];
+  badges.forEach((b,i)=>{
+    const el=document.querySelector(b[0]);if(!el)return;
+    el.textContent=b[1];
+    if(b[2]){el.style.background=b[2];el.style.color=b[3];el.style.border='1px solid '+b[4]}
+    else{const p=palette[i%palette.length];el.style.background=p[0];el.style.color=p[1];el.style.border='1px solid '+p[2]}
+  });
+}
+function renderAll(){
+  renderTicker();renderFilters();renderCatalog();renderBens();renderSteps();renderRevs();renderFaq();
+  renderNavLinks();renderFoot();renderTypes();renderCart();setStaticBadges();
+}
+/* Костыль для класса товара: .hot/.popular на продукте */
+function inCart(id){return cart.some(i=>i.id===id)}
+
+/* ================= Cart ================= */
+let cart=JSON.parse(localStorage.getItem('shop_cart')||'[]');
+function saveCart(){localStorage.setItem('shop_cart',JSON.stringify(cart));renderCart()}
+function countItems(){return cart.reduce((s,i)=>s+i.qty,0)}
+function cartTotal(){return cart.reduce((s,i)=>{const p=PRODUCTS.find(x=>x.id===i.id);return s+(p?p.price*i.qty:0)},0)}
+function addToCart(id,btn){
+  const it=cart.find(i=>i.id===id);
+  if(it)it.qty++;else cart.push({id,qty:1});
+  saveCart();toast(T('toastAdded').replace('{name}',PRODUCTS.find(p=>p.id===id)[lang].name));
+}
+function setQty(id,d){
+  const it=cart.find(i=>i.id===id);if(!it)return;
+  it.qty+=d;if(it.qty<=0)cart=cart.filter(i=>i.id!==id);
+  saveCart();
+}
+function removeItem(id){cart=cart.filter(i=>i.id!==id);saveCart()}
+function renderCart(){
+  const list=document.getElementById('cartList');
+  const foot=document.getElementById('cartFoot');
+  const cnt=document.getElementById('cartCount');
+  cnt.textContent=countItems()?countItems():'';
+  if(!cart.length){
+    list.innerHTML=`<div class="cart-empty">${T('cartEmpty')}</div>`;
+    foot.style.display='none';
+  }else{
+    foot.style.display='block';
+    list.innerHTML=cart.map(i=>{const p=PRODUCTS.find(x=>x.id===i.id);const per=p.every?T('perMonth'):'';
+      return `<div class="c-item">
+        <div class="c-ico">${p.emoji}</div>
+        <div style="flex:1">
+          <span class="c-name">${p[lang].name}</span><span class="c-price">${fmt(p.price)+per}</span>
+          <div class="qty"><button onclick="setQty(${p.id},-1)">−</button><span>${i.qty}</span><button onclick="setQty(${p.id},1)">+</button></div>
+        </div>
+        <button class="c-del" onclick="removeItem(${p.id})">✕</button>
+      </div>`}).join('');
+  }
+  document.getElementById('cartTotal').textContent=fmt(cartTotal());
+}
+function openCart(){document.getElementById('cart').classList.add('open');document.getElementById('cartOverlay').classList.add('show')}
+function closeCart(){document.getElementById('cart').classList.remove('open');document.getElementById('cartOverlay').classList.remove('show')}
+
+/* ================= Checkout / заявки ================= */
+function openCheckout(){
+  if(!cart.length){toast(T('toastCartEmpty'));return}
+  document.getElementById('orderSummary').innerHTML=cart.map(i=>{
+    const p=PRODUCTS.find(x=>x.id===i.id);const per=p.every?T('perMonth'):'';
+    return '<span>· '+p[lang].name+' × '+i.qty+' — <b>'+fmt(p.price*i.qty)+'</b></span>'
+  }).join('')+'<span style="border-top:1px solid var(--line);padding-top:8px;margin-top:4px;color:#fff;font-weight:800">'+T('total')+' '+fmt(cartTotal())+'</span>';
+  document.getElementById('cModal').classList.add('show');closeCart();
+}
+function closeCheckout(){document.getElementById('cModal').classList.remove('show')}
+function sendToChannel(channel,txt,back){
+  if(channel==='Telegram'){
+    window.open('https://t.me/amirello7?text='+encodeURIComponent(txt),'_blank');
+    back('Telegram @amirello7');
+  }else if(channel==='Discord'){
+    window.open('https://discord.com/users/amirello7','_blank');
+    back('Discord (amirello7)');
+  }else{
+    window.open('https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(txt),'_blank');
+    back('WhatsApp +'+WA_NUM);
+  }
+}
+function submitCheckout(e){
+  e.preventDefault();
+  const name=$v('oName'),phone=$v('oPhone'),channel=$v('oChannel'),msg=$v('oMsg');
+  if(!name||!phone){toast(T('toastFill'));return}
+  const items=cart.map(i=>{const p=PRODUCTS.find(x=>x.id===i.id);const per=p.every?T('perMonth'):'';return '• '+p[lang].name+' × '+i.qty+' — '+fmt(p.price*i.qty)}).join('\n');
+  const order={id:Date.now(),date:new Date().toLocaleString('ru-RU'),name,phone,channel,msg,items,total:cartTotal()};
+  const orders=JSON.parse(localStorage.getItem('shop_orders')||'[]');
+  orders.push(order);localStorage.setItem('shop_orders',JSON.stringify(orders));
+  const txt=T('orderNew')+'\n━━━━━━━━━━━━━━\n👤 '+name+'\n📞 '+phone+'\n💬 '+T('contact')+': '+channel+'\n'+items+'\n━━━━━━━━━━━━━━\n💰 '+T('total')+' '+fmt(order.total)+(msg?'\n💭 '+msg:'');
+  document.getElementById('cModal').classList.remove('show');cart=[];saveCart();
+  sendToChannel(channel,txt,res=>{
+    const ok=document.getElementById('formOk');
+    document.getElementById('formOkText').textContent=T('orderMsg').replace('{id}',order.id)+' · '+res+'. '+T('wait');
+    ok.classList.add('show');
+    toast(T('toastOrder')+': '+res);
+  });
+}
+function submitOrder(e){
+  e.preventDefault();
+  const name=$v('fName'),phone=$v('fPhone'),type=$v('fType'),channel=$v('fChannel'),msg=$v('fMsg');
+  if(!name||!phone){toast(T('toastFill'));return}
+  const txt=T('leadNew')+'\n━━━━━━━━━━\n👤 '+name+'\n📞 '+phone+'\n📄 '+type+(msg?'\n💭 '+msg:'');
+  document.getElementById('orderForm').style.display='none';
+  sendToChannel(channel,txt,res=>{
+    const ok=document.getElementById('formOk');
+    document.getElementById('formOkText').textContent=res+'. '+T('in15');
+    ok.classList.add('show');
+    toast(T('toastLead')+': '+res);
+  });
+}
+
+/* ================= Init ================= */
+renderAll();
+setLang(lang);
+</script>
+</body>
+</html>
