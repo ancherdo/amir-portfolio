@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Севара — самая красивая на свете</title>
+<meta name="description" content="Страница, созданная с любовью для Севары. Автор — amirello.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#10084;&#65039;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,500;1,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0510;
+    --bg2:#150a1e;
+    --card:#1a0e26;
+    --card2:#22122f;
+    --line:rgba(255,255,255,.08);
+    --txt:#fdf3f8;
+    --mut:#c3a3b8;
+    --rose:#ff4d8d;
+    --blush:#ff8fb8;
+    --gold:#ffd54f;
+    --violet:#a06bff;
+    --grad:linear-gradient(110deg,var(--rose),var(--violet) 50%,var(--gold));
+    --gsoft:linear-gradient(140deg,var(--rose),var(--blush));
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--txt);font-family:'Manrope',sans-serif;overflow-x:hidden;line-height:1.75}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--rose);color:#fff}
+  ::-webkit-scrollbar{width:9px}
+  ::-webkit-scrollbar-track{background:#08040c}
+  ::-webkit-scrollbar-thumb{background:linear-gradient(var(--rose),var(--gold));border-radius:6px}
+
+  body::before{content:'';position:fixed;inset:0;z-index:-2;
+    background:radial-gradient(900px 600px at 12% 8%,rgba(255,77,141,.20),transparent 60%),
+               radial-gradient(800px 600px at 88% 22%,rgba(160,107,255,.18),transparent 60%),
+               radial-gradient(900px 700px at 50% 100%,rgba(255,213,79,.12),transparent 60%),var(--bg)}
+  #hearts{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+  .wrap{position:relative;z-index:2;max-width:1120px;margin:0 auto;padding:0 6vw}
+  h1,h2,h3{font-family:'Unbounded';font-weight:800;line-height:1.1}
+  .serif{font-family:'Playfair Display',serif;font-style:italic}
+  .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  section{padding:110px 0}
+  .sec-tag{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:4px;text-transform:uppercase;
+    color:var(--blush);border:1px solid rgba(255,143,184,.35);background:rgba(255,77,141,.08);
+    padding:8px 18px;border-radius:50px;margin-bottom:22px;font-weight:700}
+  .sec-tag i{width:7px;height:7px;border-radius:50%;background:var(--rose);box-shadow:0 0 12px var(--rose);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+  .sec-title{font-size:clamp(30px,5.2vw,54px);margin-bottom:18px;letter-spacing:.5px}
+  .sec-sub{color:var(--mut);font-size:clamp(15px,2vw,18px);max-width:660px;margin-bottom:54px}
+
+  /* Loader */
+  #loader{position:fixed;inset:0;z-index:9998;background:var(--bg);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:20px;transition:opacity .7s}
+  #loader.done{opacity:0;pointer-events:none}
+  #loader .lh{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(30px,7vw,60px);
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  #loader .bar{width:190px;height:3px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
+  #loader .bar i{display:block;height:100%;width:0;background:var(--grad);transition:width 1.5s ease}
+  #loader .ls{color:var(--mut);font-size:12px;letter-spacing:4px;text-transform:uppercase}
+
+  /* Hero */
+  #hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;position:relative;padding:120px 0 80px}
+  .ribbon{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(255,213,79,.4);
+    color:var(--gold);background:rgba(255,213,79,.08);padding:9px 22px;border-radius:50px;
+    font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:800;margin-bottom:28px}
+  #hero h1{font-size:clamp(46px,13vw,150px);letter-spacing:2px;position:relative;display:inline-block}
+  #hero h1 .glow{filter:drop-shadow(0 0 34px rgba(255,77,141,.45))}
+  .floater{display:inline-block;animation:fl 3.4s ease-in-out infinite}
+  @keyframes fl{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-16px) scale(1.05)}}
+  #hero .sub{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(18px,3.4vw,32px);
+    color:var(--blush);margin-top:14px}
+  .pill-row{display:flex;flex-wrap:wrap;gap:13px;justify-content:center;margin-top:34px}
+  .pill{border:1px solid var(--line);background:rgba(255,255,255,.04);backdrop-filter:blur(8px);
+    padding:11px 24px;border-radius:50px;font-size:14px;font-weight:700;letter-spacing:.5px}
+  .pill b{color:var(--gold)}
+  .pill.r b{color:var(--rose)}
+  .scroll-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:var(--mut);
+    font-size:11px;letter-spacing:3px;text-transform:uppercase}
+
+  /* Letter */
+  .letter{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--line);
+    border-radius:26px;padding:clamp(30px,5vw,64px);position:relative;overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .letter::before{content:'';position:absolute;top:-40%;right:-18%;width:380px;height:380px;border-radius:50%;
+    background:var(--rose);filter:blur(100px);opacity:.20;pointer-events:none}
+  .letter .poem{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(19px,2.9vw,29px);
+    line-height:1.85;position:relative;z-index:1}
+  .letter .poem p{margin-bottom:26px;transition:.4s}
+  .letter .poem p:hover{color:var(--blush);transform:translateX(6px)}
+  .letter .poem p:last-child{margin-bottom:0}
+  .sign{margin-top:44px;text-align:right;position:relative;z-index:1}
+  .sign .who{font-family:'Unbounded';font-weight:800;font-size:clamp(20px,3vw,28px)}
+  .sign .note{color:var(--mut);font-size:14px;margin-top:6px}
+
+  /* Cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:22px}
+  .card{position:relative;overflow:hidden;background:linear-gradient(165deg,var(--card2),var(--card));
+    border:1px solid var(--line);border-radius:22px;padding:30px 26px;transition:.4s;will-change:transform}
+  .card::before{content:'';position:absolute;inset:-70%;pointer-events:none;opacity:0;transition:opacity .45s;
+    background:conic-gradient(from 0deg,transparent 0%,var(--c,var(--rose)) 25%,transparent 50%,var(--c2,var(--violet)) 75%,transparent 100%)}
+  .card::after{content:'';position:absolute;inset:1px;border-radius:21px;pointer-events:none;
+    background:linear-gradient(165deg,var(--card2),var(--card))}
+  .card:hover::before{opacity:.85}
+  .card:hover{transform:translateY(-9px);box-shadow:0 26px 60px rgba(255,77,141,.18);border-color:transparent}
+  .card>*{position:relative;z-index:1}
+  .card .ic{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+    font-size:25px;margin-bottom:16px;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+  .card h3{font-size:18px;margin-bottom:10px;letter-spacing:.5px}
+  .card p{color:var(--mut);font-size:14.5px}
+
+  /* Numbers */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px}
+  .stat{background:linear-gradient(165deg,var(--card2),var(--card));border:1px solid var(--line);
+    border-radius:22px;padding:34px 24px;text-align:center;transition:.4s}
+  .stat:hover{transform:translateY(-8px);border-color:rgba(255,143,184,.45)}
+  .stat .num{font-family:'Unbounded';font-weight:900;font-size:clamp(34px,6vw,52px);
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.1}
+  .stat .lbl{color:var(--mut);font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-top:10px;font-weight:700}
+  .age-note{margin-top:40px;text-align:center;font-family:'Playfair Display',serif;font-style:italic;
+    font-size:clamp(18px,3vw,27px);color:var(--blush)}
+
+  /* Final */
+  #final{text-align:center;padding:130px 0 110px}
+  .biglove{font-family:'Unbounded';font-weight:900;font-size:clamp(34px,9vw,88px);letter-spacing:2px;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 28px rgba(255,77,141,.35))}
+  .from{margin-top:34px;font-size:14px;letter-spacing:5px;text-transform:uppercase;color:var(--mut)}
+  .from b{color:#fff;font-family:'Unbounded';font-weight:800}
+
+  footer{border-top:1px solid var(--line);padding:34px 0;text-align:center;color:var(--mut);font-size:13px}
+
+  /* Reveal */
+  .rv{opacity:0;transform:translateY(38px);transition:opacity .9s ease,transform .9s ease}
+  .rv.in{opacity:1;transform:none}
+
+  @media(max-width:640px){
+    section{padding:74px 0}
+    .card{padding:24px 20px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .rv{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="hearts"></canvas>
+
+<div id="loader">
+  <div class="lh">Севара</div>
+  <div class="bar"><i></i></div>
+  <div class="ls">Готовлю сюрприз</div>
+</div>
+
+<header>
+  <div class="wrap">
+    <section id="hero">
+      <div class="ribbon">Сделано с любовью</div>
+      <h1>
+        <span class="floater grad glow">Севара</span>
+      </h1>
+      <div class="sub">самая красивая девочка, которую я знаю</div>
+      <div class="pill-row">
+        <div class="pill r">Только <b>для тебя</b></div>
+        <div class="pill">Только <b>навсегда</b></div>
+        <div class="pill">Мы — <b>мы</b> ♡</div>
+      </div>
+      <div class="scroll-hint">↓ листай вниз ↓</div>
+    </section>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <div class="sec-tag rv"><i></i> Письмо тебе</div>
+    <h2 class="sec-title rv">Несколько слов, <span class="grad">которые я хочу сказать</span></h2>
+    <p class="sec-sub rv">Я не писатель. Но ради тебя я готов писать хоть тысячу строк — и всё равно не смогу передать, что ты значишь для меня.</p>
+    <div class="letter rv">
+      <div class="poem">
+        <p>Ты — самое прекрасное, что случилось со мной.<br>Самое высокое, что я знал, и самое родное.</p>
+        <p>Ты выше неба, выше моих мыслей и дней.<br>Красивей, чем рассветы, чем звёзды, чем поля.</p>
+        <p>Я шёл по жизни тихо, было пусто и темно,<br>а ты пришла — и стало сразу всё залито светом.</p>
+        <p>Ты пахнешь теплом, ты пахнешь чем-то сладким,<br>И я не спорю — я готов проиграть любую правду.</p>
+        <p>Мне ничего не надо, только ты и тишина.<br>Ведь ты и есть моя тишина, моя весна.</p>
+        <p class="grad" style="font-style:normal;font-family:'Unbounded';font-weight:800;font-size:clamp(17px,2.6vw,25px)">Я люблю тебя, Севара. Просто так. Просто потому, что ты — это ты.</p>
+      </div>
+      <div class="sign">
+        <div class="who grad">amirello ♡</div>
+        <div class="note">на двоих на нас — я и ты</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-tag rv"><i></i> Стих для тебя</div>
+    <h2 class="sec-title rv">Про тебя — <span class="grad">моё стихотворение</span></h2>
+    <p class="sec-sub rv">Я не умею читать со сцены, но ради тебя попробовал. Слушай внимательно.</p>
+    <div class="letter rv">
+      <div class="poem" style="text-align:center">
+        <p>Ты выше неба, и я поднимаю глаза —<br>в них столько света, столько жизни, столько тепла.<br>Ты пахнешь летом, весной и дождём,<br>и пахнешь так, будто знаешь всё про меня вдвоём.</p>
+        <p>Ты красива так, что я иногда<br>забываю имя, забываю, где я и куда.<br>Ты улыбнёшься — и станет светлей,<br>ты позовёшь меня тихо — и я стану храбрей.</p>
+        <p>Ты — моё небо в любую погоду,<br>ты — моя тишина в шумном мире,<br>ты — моя радость, моя награда,<br>ты — единственная, кто верит в меня.</p>
+        <p class="grad" style="font-style:normal;font-family:'Unbounded';font-weight:800;font-size:clamp(17px,2.6vw,25px);line-height:1.7">
+          Ты — моё солнце, моя звезда,<br>Я люблю тебя — навсегда, навсегда.<br>Ты — моё солнце, моя звезда,<br>amirello — твой. И это навсегда.</p>
+      </div>
+      <div class="sign">
+        <div class="who grad">amirello ♡</div>
+        <div class="note">автор: amirello</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-tag rv"><i></i> Почему ты</div>
+    <h2 class="sec-title rv">Причины, по которым <span class="grad">мир стал лучше</span></h2>
+    <p class="sec-sub rv">Я собрал их специально для тебя. Их очень много — здесь только самые главные.</p>
+    <div class="cards">
+      <div class="card rv" style="--c:#ff4d8d;--c2:#ffd54f">
+        <div class="ic">👑</div>
+        <h3>Твой рост</h3>
+        <p>Ты высокая — и это твоя суперсила. Рядом с тобой я чувствую себя большим, даже когда это не так. Ты задаёшь планку, до которой хочется дотянуться.</p>
+      </div>
+      <div class="card rv" style="--c:#a06bff;--c2:#ff4d8d">
+        <div class="ic">✨</div>
+        <h3>Твоя красота</h3>
+        <p>Красивая — это слабое слово. Ты красива так, что люди оборачиваются, а я даже не пытаюсь отвести взгляд. И буду учиться восхищаться тобой всю жизнь.</p>
+      </div>
+      <div class="card rv" style="--c:#ffd54f;--c2:#ff8fb8">
+        <div class="ic">😊</div>
+        <h3>Твой смех</h3>
+        <p>Твой смех — мой любимый звук. Готов слушать его вечно, даже если ты смеёшься надо мной. Особенно тогда — когда ты смеёшься надо мной.</p>
+      </div>
+      <div class="card rv" style="--c:#ff8fb8;--c2:#a06bff">
+        <div class="ic">👀</div>
+        <h3>Твои глаза</h3>
+        <p>В твоих глазах я вижу своё будущее. Спокойное, светлое и очень-очень счастливое.</p>
+      </div>
+      <div class="card rv" style="--c:#ff4d8d;--c2:#a06bff">
+        <div class="ic">🌙</div>
+        <h3>Ты — это ты</h3>
+        <p>Не светлая и не тёмная, не весёлая и не грустная — просто ты. Настоящая. И мне больше ничего не нужно.</p>
+      </div>
+      <div class="card rv" style="--c:#a06bff;--c2:#ffd54f">
+        <div class="ic">💫</div>
+        <h3>Ещё одна деталь</h3>
+        <p>Ты — самая красивая, а я — тот, кто это знает. И знать это — самое счастливое, что со мной случалось.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-tag rv"><i></i> Обещания</div>
+    <h2 class="sec-title rv">Что я <span class="grad">обещаю тебе</span></h2>
+    <p class="sec-sub rv">Небольшой список. Но я буду держать каждое слово, даже когда будет трудно.</p>
+    <div class="cards">
+      <div class="card rv" style="--c:#ff4d8d;--c2:#ffd54f">
+        <div class="ic">🤍</div>
+        <h3>Быть рядом</h3>
+        <p>Не по расписанию, а когда тебе плохо, когда ты поссорилась, когда просто тяжело. Я приду — без вопросов и без опозданий.</p>
+      </div>
+      <div class="card rv" style="--c:#ffd54f;--c2:#ff8fb8">
+        <div class="ic">🛡️</div>
+        <h3>Беречь тебя</h3>
+        <p>Ты — самое ценное, что у меня есть. Я никогда не сделаю тебе больно и никого не допущу, чтобы ты почувствовала себя плохо.</p>
+      </div>
+      <div class="card rv" style="--c:#a06bff;--c2:#ff4d8d">
+        <div class="ic">🌟</div>
+        <h3>Восхищаться</h3>
+        <p>Сколько бы лет ни прошло, я буду смотреть на тебя так же, как в первый день — как на самую красивую девочку на свете.</p>
+      </div>
+      <div class="card rv" style="--c:#ff8fb8;--c2:#a06bff">
+        <div class="ic">🎧</div>
+        <h3>Слушать тебя</h3>
+        <p>Твои истории, твои мечты, твои «а помнишь». Я всегда слушаю, потому что мне нравится всё, что говоришь ты.</p>
+      </div>
+      <div class="card rv" style="--c:#ff4d8d;--c2:#a06bff">
+        <div class="ic">♾️</div>
+        <h3>Не отпускать</h3>
+        <p>Ни на один день. Даже когда будет трудно, даже когда поссоримся, даже когда ты будешь молчать — я останусь.</p>
+      </div>
+      <div class="card rv" style="--c:#a06bff;--c2:#ffd54f">
+        <div class="ic">☀️</div>
+        <h3>Делать счастливой</h3>
+        <p>Смеяться вместе, ездить куда-то просто так, показывать мир и говорить «смотри, какой он большой — но ты красивее».</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="final">
+    <div class="biglove rv">ЛЮБЛЮ ТЕБЯ</div>
+    <div class="from rv">всем сердцем — <b>amirello</b> ♡</div>
+  </section>
+
+</div>
+
+<footer>Сделано специально для Севары ♡ автор — amirello</footer>
+
+<script>
+  const cv = document.getElementById('hearts');
+  const cx = cv.getContext('2d');
+  let W, H, bits = [];
+  const GLYPHS = ['\u2764', '\u2665', '\u{1F495}', '\u2661'];
+  const rand = (a, b) => a + Math.random() * (b - a);
+
+  const build = () => {
+    W = cv.width = innerWidth;
+    H = cv.height = innerHeight;
+    const n = Math.min(46, Math.max(16, Math.floor(W / 34)));
+    bits = Array.from({ length: n }, () => ({
+      x: rand(0, W), y: rand(-H, H),
+      s: rand(7, 20), vy: rand(.18, .7), vx: rand(-.22, .22),
+      a: rand(.16, .6), g: GLYPHS[Math.floor(rand(0, GLYPHS.length))],
+      o: rand(0, Math.PI * 2)
+    }));
+  };
+  build();
+  addEventListener('resize', build);
+
+  (function loop() {
+    cx.clearRect(0, 0, W, H);
+    bits.forEach(b => {
+      b.y += b.vy;
+      b.x += b.vx + Math.sin(b.o + b.y / 130) * .28;
+      if (b.y - b.s > H) { b.y = -b.s * 3; b.x = rand(0, W); }
+      cx.globalAlpha = b.a;
+      cx.font = b.s + 'px serif';
+      cx.fillStyle = b.g === '\u{1F495}' ? '#ffd54f' : '#ff77ab';
+      cx.fillText(b.g, b.x, b.y);
+    });
+    cx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  })();
+
+  const loader = document.getElementById('loader');
+  const bar = loader.querySelector('.bar i');
+  setTimeout(() => { bar.style.width = '100%'; }, 120);
+  setTimeout(() => { loader.classList.add('done'); }, 1750);
+
+  const io = new IntersectionObserver((es) => {
+    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: .14 });
+  document.querySelectorAll('.rv').forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * 90 + 'ms';
+    io.observe(el);
+  });
+</script>
+</body>
+</html>
