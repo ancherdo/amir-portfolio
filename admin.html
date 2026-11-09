@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ADMIN — ANON SHOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Manrope,sans-serif}
+body{background:#0d0b09;color:#f3efe6}
+header{padding:14px 20px;border-bottom:1px solid #2a2621;display:flex;justify-content:space-between;align-items:center}
+header a{color:#d4af37;text-decoration:none}
+main{max-width:1000px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.card{background:#16130f;border:1px solid #2a2621;border-radius:14px;padding:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:#16130f;border:1px solid #2a2621;border-radius:14px;padding:16px;text-align:center}
+.stat .num{font-size:28px;font-weight:800;color:#d4af37}
+.stat .label{opacity:.7}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row input{flex:1;min-width:160px;padding:10px;border-radius:10px;border:1px solid #2a2621;background:#0d0b09;color:#f3efe6}
+.btn{background:#d4af37;color:#0d0b09;border:none;padding:10px 16px;border-radius:10px;font-weight:800;cursor:pointer}
+.btn.ghost{background:transparent;color:#d4af37;border:1px solid #d4af37}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{display:flex;gap:12px;align-items:center;background:#16130f;border:1px solid #2a2621;border-radius:12px;padding:10px 14px}
+.item img{width:60px;height:60px;border-radius:10px;object-fit:cover}
+.info{flex:1}
+.tools{display:flex;gap:8px}
+</style>
+</head>
+<body>
+<header>
+  <b>АДМИН ПАНЕЛЬ</b>
+  <a href="index.html">← На сайт</a>
+</header>
+<main>
+  <div class="stats">
+    <div class="stat">
+      <div class="num" id="visits">0</div>
+      <div class="label">Посещений сегодня</div>
+    </div>
+    <div class="stat">
+      <div class="num" id="total">0</div>
+      <div class="label">Всего посещений</div>
+    </div>
+    <div class="stat">
+      <div class="num" id="products">0</div>
+      <div class="label">Товаров</div>
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:12px">Посещения за 7 дней</h3>
+    <canvas id="chart" height="100"></canvas>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:12px">Добавить товар</h3>
+    <div class="row">
+      <input id="name" placeholder="Название">
+      <input id="price" type="number" placeholder="Цена">
+      <input id="cat" placeholder="Категория (snack/drink)">
+      <input id="emoji" placeholder="Эмодзи">
+    </div>
+    <div style="margin-top:12px"><button class="btn" id="add">Добавить</button></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:12px">Товары</h3>
+    <div class="list" id="list"></div>
+  </div>
+</main>
+<script>
+const file='products.json';
+let products=[];
+function today(){return new Date().toISOString().slice(0,10);}
+function getStats(){
+  const s=JSON.parse(localStorage.getItem('anon_stats')||'{}');
+  if(!s[today()])s[today()]=0;
+  return s;
+}
+function countVisit(){
+  const s=getStats();
+  s[today()]++;
+  localStorage.setItem('anon_stats',JSON.stringify(s));
+}
+countVisit();
+function renderStats(){
+  const s=getStats();
+  const keys=Object.keys(s).sort();
+  const last7=keys.slice(-7);
+  const visitsToday=s[today()]||0;
+  const total=Object.values(s).reduce((a,b)=>a+b,0);
+  document.getElementById('visits').textContent=visitsToday;
+  document.getElementById('total').textContent=total;
+  const ctx=document.getElementById('chart');
+  if(window.chart)window.chart.destroy();
+  window.chart=new Chart(ctx,{type:'bar',data:{labels:last7.map(d=>d.slice(5)),datasets:[{label:'Посещения',data:last7.map(d=>s[d]),backgroundColor:'#d4af37'}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{color:'#2a2621'},ticks:{color:'#f3efe6'}},y:{grid:{color:'#2a2621'},ticks:{color:'#f3efe6'}}}}});
+}
+async function load(){
+  try{const res=await fetch(file,{cache:'no-store'});products=await res.json();}catch(e){products=[];}
+  document.getElementById('products').textContent=products.length;
+  render();renderStats();
+}
+function save(){
+  const blob=new Blob([JSON.stringify(products,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='products.json';
+  a.click();
+}
+function render(){
+  document.getElementById('list').innerHTML=products.map((p,i)=>{
+    const name=Array.isArray(p)?p[0]:p.name;
+    const price=Array.isArray(p)?p[1]:p.price;
+    const cat=Array.isArray(p)?p[2]:p.cat;
+    const emoji=Array.isArray(p)?p[3]:p.emoji;
+    return `<div class="item">
+      <img src="img/${encodeURIComponent(name)}.png" onerror="this.style.display='none'">
+      <div class="info"><div><b>${name}</b> — ${price} сум</div><div style="opacity:.7;font-size:13px">${cat||''} ${emoji||''}</div></div>
+      <div class="tools"><button class="btn ghost" data-del="${i}">Удалить</button></div>
+    </div>`;
+  }).join('');
+}
+document.getElementById('add').onclick=()=>{
+  const name=document.getElementById('name').value.trim();
+  const price=+document.getElementById('price').value;
+  const cat=document.getElementById('cat').value.trim()||'snack';
+  const emoji=document.getElementById('emoji').value.trim()||'🛍';
+  if(!name||!price)return alert('Заполни название и цену');
+  products.push([name,price,cat,emoji]);
+  save();
+  document.getElementById('name').value='';document.getElementById('price').value='';
+  load();
+};
+document.getElementById('list').addEventListener('click',e=>{
+  const b=e.target.closest('[data-del]'); if(!b)return;
+  products.splice(+b.dataset.del,1); save(); load();
+});
+load();
+</script>
+</body>
+</html>
