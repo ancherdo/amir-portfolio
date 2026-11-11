@@ -2,6 +2,8 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>ANON</title>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -205,6 +207,7 @@ nav.top::-webkit-scrollbar{display:none}
     <button class="navbtn active" data-tab="shop">МАГАЗИН</button>
     <button class="navbtn" data-tab="taxi">ТАКСИ</button>
     <button class="navbtn" data-tab="games">ИГРЫ</button>
+    <button class="navbtn" data-tab="translate">ПЕРЕВОДЧИК</button>
     <button class="navbtn" data-tab="nav">НАВИГАТОР</button>
     <button class="navbtn" data-tab="wallet">КОШЕЛЁК</button>
     <a class="navbtn" href="admin.html">АДМИН</a>
@@ -221,6 +224,7 @@ nav.top::-webkit-scrollbar{display:none}
   <div class="menuwrap">
     <div class="mtitle">Сервисы ANON</div>
     <div class="mgrid" id="mgrid"></div>
+    <div class="mtitle" style="margin-top:22px">ANON · версия 4</div>
   </div>
 </div>
 
@@ -246,6 +250,7 @@ nav.top::-webkit-scrollbar{display:none}
     <div class="panel" id="tout" style="display:none">
       <h3>Перевод</h3>
       <div class="out" id="tres"></div>
+      <button class="ghostbtn" id="tcopy">Копировать</button>
     </div>
   </div>
 </div>
@@ -816,21 +821,39 @@ function renderMenu(){
 }
 
 /* ---------- TRANSLATOR ---------- */
+const LANGN={ru:'Русский',uz:'Узбекский',en:'Английский'};
 document.getElementById('tswap').onclick=()=>{
   const a=document.getElementById('tfrom'),b=document.getElementById('tto');
   const t=a.value;a.value=b.value;b.value=t;
 };
+async function trMyMemory(q,from,to){
+  const r=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(q)+'&langpair='+encodeURIComponent(from+'|'+to));
+  const j=await r.json();
+  const t=j&&j.responseData&&j.responseData.translatedText;
+  if(!t||/MYMEMORY WARNING|INVALID/i.test(t))throw new Error('bad');
+  return t;
+}
+async function trGoogle(q,from,to){
+  const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl='+from+'&tl='+to+'&q='+encodeURIComponent(q));
+  const j=await r.json();
+  return (j[0]||[]).map(x=>x[0]).join('');
+}
 document.getElementById('tgo').onclick=async()=>{
   const q=document.getElementById('tsrc').value.trim();
   const from=document.getElementById('tfrom').value,to=document.getElementById('tto').value;
   if(!q)return;
-  document.getElementById('tout').style.display='block';
-  document.getElementById('tres').textContent='Перевожу…';
-  try{
-    const r=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(q)+'&langpair='+encodeURIComponent(from+'|'+to));
-    const j=await r.json();
-    document.getElementById('tres').textContent=(j.responseData&&j.responseData.translatedText)||'Не удалось перевести';
-  }catch(e){document.getElementById('tres').textContent='Ошибка сети. Проверь интернет.';}
+  const out=document.getElementById('tout'),res=document.getElementById('tres');
+  out.style.display='block';res.textContent='Перевожу…';
+  if(from===to){res.textContent=q;return;}
+  try{res.textContent=await trGoogle(q,from,to);return;}catch(e){}
+  try{res.textContent=await trMyMemory(q,from,to);return;}catch(e){}
+  res.textContent='Не удалось перевести. Проверь интернет.';
+};
+document.getElementById('tcopy').onclick=async()=>{
+  const t=document.getElementById('tres').textContent;
+  try{await navigator.clipboard.writeText(t);document.getElementById('tcopy').textContent='Скопировано ✓';}
+  catch(e){document.getElementById('tcopy').textContent='Не удалось';}
+  setTimeout(()=>{document.getElementById('tcopy').textContent='Копировать';},1500);
 };
 
 /* ---------- ACCOUNT ---------- */
