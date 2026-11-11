@@ -2,23 +2,23 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>ANON</title>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Manrope,sans-serif}
-body{background:#0d0b09;color:#f3efe6}
-header{position:sticky;top:0;background:#0d0b09;border-bottom:1px solid #2a2621;padding:12px 16px;display:flex;gap:12px;align-items:center;z-index:100;flex-wrap:wrap}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d0b09;color:#f3efe6;font-family:Manrope,sans-serif}
+header{position:sticky;top:0;background:#0d0b09;border-bottom:1px solid #2a2621;padding:12px 16px;display:flex;gap:12px;align-items:center;z-index:2000;flex-wrap:wrap}
 .logo{font-weight:800;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
 .logo span{color:#d4af37}
 .search{flex:1;min-width:150px}
-.search input{width:100%;padding:9px 14px;border-radius:999px;border:1px solid #2a2621;background:#16130f;color:#f3efe6}
+.search input{width:100%;padding:9px 14px;border-radius:999px;border:1px solid #2a2621;background:#16130f;color:#f3efe6;font-family:Manrope}
 nav{display:flex;gap:6px}
-.navbtn{background:transparent;border:1px solid #2a2621;color:#f3efe6;padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:700;font-size:13px}
+.navbtn{background:transparent;border:1px solid #2a2621;color:#f3efe6;padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:700;font-size:13px;font-family:Manrope}
 .navbtn.active{border-color:#d4af37;color:#d4af37}
-.cart{background:#d4af37;color:#0d0b09;border:none;padding:9px 16px;border-radius:999px;font-weight:800;cursor:pointer}
+.cart{background:#d4af37;color:#0d0b09;border:none;padding:9px 16px;border-radius:999px;font-weight:800;cursor:pointer;font-family:Manrope}
 .page{display:none}
 .page.active{display:block}
 .wrap{max-width:1100px;margin:0 auto;padding:16px}
@@ -28,33 +28,74 @@ nav{display:flex;gap:6px}
 .img img{width:100%;height:100%;object-fit:cover}
 .title{font-weight:700;font-size:13px}
 .price{font-weight:800;font-size:16px}
-.add{background:#d4af37;color:#0d0b09;border:none;padding:9px;border-radius:10px;font-weight:800;cursor:pointer}
+.add{background:#d4af37;color:#0d0b09;border:none;padding:9px;border-radius:10px;font-weight:800;cursor:pointer;font-family:Manrope}
 .add.in{background:transparent;color:#d4af37;border:1px solid #d4af37}
-.taxi{height:calc(100dvh - 70px);position:relative}
+
+/* ===== TAXI (Yandex Go style) ===== */
+.taxi{position:relative;height:calc(100dvh - 66px);background:#eef0f3;font-family:Inter,sans-serif;color:#21201f}
 #tmap{position:absolute;inset:0}
-.tbox{position:absolute;top:12px;left:12px;right:12px;background:#16130f;border:1px solid #2a2621;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;max-width:380px;z-index:500}
-.tbox h2{font-size:16px}
-.tbox label{font-size:11px;opacity:.7}
-.tbox input{width:100%;padding:10px;border-radius:10px;border:1px solid #2a2621;background:#0d0b09;color:#f3efe6}
-.tr{display:flex;gap:6px}
-.tr button{flex:1;padding:8px;border-radius:8px;border:1px solid #2a2621;background:transparent;color:#f3efe6;font-size:12px}
-.tr button.active{border-color:#d4af37;color:#d4af37}
-.tp{display:flex;justify-content:space-between;font-weight:800}
-.tb{background:#d4af37;color:#0d0b09;border:none;padding:11px;border-radius:10px;font-weight:800}
-.drawer{position:fixed;right:-100%;top:0;height:100dvh;width:min(380px,100%);background:#16130f;border-left:1px solid #2a2621;transition:.3s;display:flex;flex-direction:column;z-index:999}
+#tmap .leaflet-tile{filter:grayscale(.55) brightness(1.06) contrast(.95)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:24px 24px 0 0;padding:8px 16px 18px;box-shadow:0 -10px 34px rgba(0,0,0,.18);max-width:440px;margin:0 auto;z-index:1500;max-height:78%;overflow:auto}
+.grab{width:44px;height:4px;border-radius:99px;background:#d9dbdf;margin:6px auto 14px}
+.where{background:#f2f3f5;border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:center}
+.rdots{display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 0}
+.rdots i{width:9px;height:9px;border-radius:50%;display:block}
+.rdots .a{background:#21201f}
+.rdots .b{background:#ffcc00;border:1px solid #21201f}
+.rdots u{display:block;width:1px;height:16px;background:#c8ccd2}
+.fields{flex:1;display:flex;flex-direction:column}
+.fields input{border:none;background:transparent;outline:none;font-size:15px;font-family:Inter,sans-serif;color:#21201f;padding:7px 0;font-weight:500}
+.fields input+input{border-top:1px solid #e3e5e9}
+.fields input::placeholder{color:#9aa0a6;font-weight:400}
+.chips{display:flex;gap:8px;margin-top:10px;overflow:auto;padding-bottom:2px}
+.chips button{white-space:nowrap;border:none;background:#f2f3f5;color:#21201f;padding:9px 14px;border-radius:999px;font-size:13px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer}
+.chips button:active{background:#e6e8ec}
+.ttl{font-size:13px;font-weight:700;margin:14px 0 8px;color:#6b7078;text-transform:uppercase;letter-spacing:.04em}
+.tariffs{display:flex;flex-direction:column;gap:8px}
+.tcard{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid #eef0f3;border-radius:16px;padding:10px 14px;cursor:pointer;font-family:Inter,sans-serif;text-align:left;width:100%}
+.tcard.active{border-color:#21201f}
+.ticon{font-size:26px;line-height:1}
+.tinfo{flex:1;display:flex;flex-direction:column}
+.tname{font-weight:700;font-size:15px;display:flex;gap:8px;align-items:baseline}
+.teta{font-size:11px;font-weight:600;color:#9aa0a6}
+.tdesc{font-size:12px;color:#8b9096}
+.tprice{font-weight:700;font-size:15px;white-space:nowrap}
+.contacts{display:flex;gap:8px;margin-top:12px}
+.contacts input{flex:1;min-width:0;background:#f2f3f5;border:none;border-radius:12px;padding:12px;font-size:14px;font-family:Inter,sans-serif;color:#21201f;outline:none}
+.go{width:100%;margin-top:12px;background:#21201f;color:#fff;border:none;border-radius:14px;padding:16px;font-size:16px;font-weight:700;font-family:Inter,sans-serif;cursor:pointer}
+.go:active{transform:scale(.99)}
+.hint{font-size:11px;color:#9aa0a6;text-align:center;margin-top:8px}
+.searching{display:none;flex-direction:column;align-items:center;gap:14px;padding:18px 0 6px}
+.spin{width:46px;height:46px;border-radius:50%;border:4px solid #f2f3f5;border-top-color:#ffcc00;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.searching b{font-size:17px}
+.searching span{font-size:13px;color:#8b9096}
+.driver{display:none;flex-direction:column;gap:12px;padding-top:4px}
+.drow{display:flex;gap:12px;align-items:center}
+.dcar{width:64px;height:48px;border-radius:12px;background:#f2f3f5;display:flex;align-items:center;justify-content:center;font-size:28px}
+.dname{font-weight:700;font-size:16px}
+.dmeta{font-size:13px;color:#8b9096}
+.dplate{font-weight:700;letter-spacing:.06em;font-size:15px}
+.dbtns{display:flex;gap:8px}
+.dbtns button{flex:1;border-radius:12px;padding:13px;font-weight:700;font-family:Inter,sans-serif;cursor:pointer;border:none;font-size:14px}
+.dcall{background:#ffcc00;color:#21201f}
+.dcancel{background:#f2f3f5;color:#21201f}
+
+/* ===== CART ===== */
+.drawer{position:fixed;right:-100%;top:0;height:100dvh;width:min(380px,100%);background:#16130f;border-left:1px solid #2a2621;transition:.3s;display:flex;flex-direction:column;z-index:3000}
 .drawer.on{right:0}
-.dhead{padding:16px;border-bottom:1px solid #2a2621;display:flex;justify-content:space-between}
-.list{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.dhead{padding:16px;border-bottom:1px solid #2a2621;display:flex;justify-content:space-between;font-family:Manrope}
+.list{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px;font-family:Manrope}
 .item{display:flex;gap:10px;align-items:center}
 .item img{width:60px;height:60px;border-radius:10px;object-fit:cover}
 .info{flex:1}
 .qty{display:flex;gap:8px;align-items:center}
-.qty button{width:28px;height:28px;border-radius:8px;border:1px solid #2a2621;background:none;color:#f3efe6}
-.total{padding:16px;border-top:1px solid #2a2621;display:flex;justify-content:space-between;font-weight:800}
-.checkout{margin:16px;background:#d4af37;color:#0d0b09;border:none;padding:12px;border-radius:10px;font-weight:800}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:998}
+.qty button{width:28px;height:28px;border-radius:8px;border:1px solid #2a2621;background:none;color:#f3efe6;font-family:Manrope}
+.total{padding:16px;border-top:1px solid #2a2621;display:flex;justify-content:space-between;font-weight:800;font-family:Manrope}
+.checkout{margin:16px;background:#d4af37;color:#0d0b09;border:none;padding:12px;border-radius:10px;font-weight:800;font-family:Manrope}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:2500}
 .overlay.on{display:block}
-@media(min-width:700px){.tbox{top:20px;left:20px;right:auto}}
+@media(min-width:700px){.sheet{left:50%;right:auto;transform:translateX(-50%);width:440px;border-radius:24px;bottom:20px}}
 </style>
 </head>
 <body>
@@ -68,59 +109,235 @@ nav{display:flex;gap:6px}
   </nav>
   <button class="cart" id="open">Корзина (<span id="c">0</span>)</button>
 </header>
+
 <div class="page active" id="tab-shop">
   <div class="wrap"><div class="grid" id="grid"></div></div>
 </div>
+
 <div class="page" id="tab-taxi">
   <div class="taxi">
     <div id="tmap"></div>
-    <div class="tbox">
-      <h2>АНОН ТАКСИ</h2>
-      <div><label>Откуда (нажми на карту)</label><input id="ta" readonly></div>
-      <div><label>Куда</label><input id="tb" placeholder="Куда поедем"></div>
-      <div style="display:flex;gap:8px">
-        <div style="flex:1"><label>Имя</label><input id="tname"></div>
-        <div style="flex:1"><label>Телефон</label><input id="tphone" placeholder="+998"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+
+      <div id="form">
+        <div class="where">
+          <div class="rdots"><i class="a"></i><u></u><i class="b"></i></div>
+          <div class="fields">
+            <input id="ta" placeholder="Откуда" value="Моё местоположение">
+            <input id="tb" placeholder="Куда поедем?">
+          </div>
+        </div>
+        <div class="chips">
+          <button data-addr="Дом">🏠 Дом</button>
+          <button data-addr="Школа">🏫 Школа</button>
+          <button data-addr="Работа">💼 Работа</button>
+        </div>
+        <div class="ttl">Тариф</div>
+        <div class="tariffs" id="tariffs"></div>
+        <div class="contacts">
+          <input id="tname" placeholder="Имя">
+          <input id="tphone" placeholder="+998">
+        </div>
+        <button class="go" id="tcall">Заказать</button>
+        <div class="hint">Нажми на карту, чтобы указать точку</div>
       </div>
-      <div class="tr">
-        <button class="active" data-t="Эконом">Эконом</button>
-        <button data-t="Комфорт">Комфорт</button>
-        <button data-t="Бизнес">Бизнес</button>
+
+      <div class="searching" id="searching">
+        <div class="spin"></div>
+        <b>Ищем машину…</b>
+        <span id="searchTar">Эконом · 3 мин</span>
+        <button class="go" id="cancel1">Отменить</button>
       </div>
-      <div class="tp"><span>Цена</span><span id="tp">0 сум</span></div>
-      <button class="tb" id="tcall" disabled>Вызвать</button>
+
+      <div class="driver" id="driver">
+        <div class="drow">
+          <div class="dcar">🚙</div>
+          <div style="flex:1">
+            <div class="dname">Азиз · ⭐ 4.9</div>
+            <div class="dmeta">Toyota Cobalt · серый</div>
+          </div>
+          <div class="dplate">01 A 777 AA</div>
+        </div>
+        <div class="dmeta" id="dprice"></div>
+        <div class="dbtns">
+          <button class="dcall" id="dcall">Позвонить</button>
+          <button class="dcancel" id="cancel2">Отменить</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
 <div class="overlay" id="ov"></div>
 <div class="drawer" id="dr">
-  <div class="dhead"><b>Корзина</b><button id="close" style="background:none;border:none;color:#f3efe6">✕</button></div>
+  <div class="dhead"><b>Корзина</b><button id="close" style="background:none;border:none;color:#f3efe6;font-size:16px">✕</button></div>
   <div class="list" id="list"></div>
   <div class="total"><span>Итого</span><span id="sum">0 сум</span></div>
   <button class="checkout" id="order">Оформить в Telegram</button>
 </div>
+
 <script>
 const TG="intellect_anon";
 let cart={};try{cart=JSON.parse(localStorage.getItem('cart')||'{}')}catch(e){}
 const fmt=n=>n.toLocaleString('ru-RU');
 function img(n){return 'img/'+encodeURIComponent(n)+'.png';}
-async function load(){try{const r=await fetch('products.json',{cache:'no-store'});window.P=await r.json();}catch(e){window.P=[["Чипсы Pringles",16000,"snack","🥔"],["Чипсы Lay's 60 г",17000,"snack","🥔"],["Жвачка Dirol (5 шт)",4000,"snack","🫧"],["Чай Lipton зелёный 0,5 л",8990,"drink","🍵"],["Coca-Cola 0,5 л",8999,"drink","🥤"],["Pepsi 0,5 л",8490,"drink","🥤"],["Fanta 0,5 л",8990,"drink","🍊"],["Sprite 0,5 л",8990,"drink","🥤"],["Fuse Tea 0,5 л",8990,"drink","🧃"],["Марс",13000,"snack","🍫"],["Сникерс",13000,"snack","🍫"],["Баунти",13000,"snack","🍫"],["Твикс",13000,"snack","🍫"],["Орео",24000,"snack","🍪"]];}render();}
-function render(){const P=window.P||[];const q=document.getElementById('q').value.toLowerCase();document.getElementById('grid').innerHTML=P.map((p,i)=>{if(q&&!p[0].toLowerCase().includes(q))return'';const inCart=cart[i]>0;return `<div class="card"><div class="img"><img src="${img(p[0])}" onerror="this.remove()"></div><div class="title">${p[0]}</div><div class="price">${fmt(p[1])} сум</div><button class="add ${inCart?'in':''}" data-add="${i}">${inCart?'В корзине':'В корзину'}</button></div>`;}).join('');update();}
-function update(){const P=window.P||[];let c=0,s=0;for(let k in cart){if(P[k]){c+=cart[k];s+=P[k][1]*cart[k]}}document.getElementById('c').textContent=c;document.getElementById('sum').textContent=fmt(s)+' сум';document.getElementById('list').innerHTML=Object.keys(cart).filter(k=>cart[k]>0&&P[k]).map(k=>{const p=P[k],n=cart[k];return `<div class="item"><img src="${img(p[0])}" onerror="this.remove()"><div class="info"><div>${p[0]}</div><div>${fmt(p[1])} сум</div></div><div class="qty"><button data-dec="${k}">-</button><span>${n}</span><button data-inc="${k}">+</button></div></div>`;}).join('')||'Корзина пуста';}
-document.querySelectorAll('.navbtn[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+b.dataset.tab).classList.add('active');document.getElementById('sw').style.display=b.dataset.tab==='shop'?'block':'none';document.getElementById('open').style.display=b.dataset.tab==='shop'?'block':'none';if(b.dataset.tab==='taxi'&&!window._tm)loadT();});
-document.getElementById('grid').addEventListener('click',e=>{const P=window.P||[];const b=e.target.closest('[data-add]');if(!b)return;const i=+b.dataset.add;if(cart[i]){open();return;}cart[i]=1;localStorage.setItem('cart',JSON.stringify(cart));render();open();});
-document.getElementById('list').addEventListener('click',e=>{const P=window.P||[];const inc=e.target.closest('[data-inc]'),dec=e.target.closest('[data-dec]');if(inc){const i=+inc.dataset.inc;if(P[i]){cart[i]++;localStorage.setItem('cart',JSON.stringify(cart));render();}return;}if(dec){const i=+dec.dataset.dec;if(P[i]){cart[i]--;if(cart[i]<=0)delete cart[i];localStorage.setItem('cart',JSON.stringify(cart));render();}return;}});
+
+async function load(){
+  try{const r=await fetch('products.json',{cache:'no-store'});window.P=await r.json();}
+  catch(e){window.P=[["Чипсы Pringles",16000,"snack","🥔"],["Чипсы Lay's 60 г",17000,"snack","🥔"],["Жвачка Dirol (5 шт)",4000,"snack","🫧"],["Чай Lipton зелёный 0,5 л",8990,"drink","🍵"],["Coca-Cola 0,5 л",8999,"drink","🥤"],["Pepsi 0,5 л",8490,"drink","🥤"],["Fanta 0,5 л",8990,"drink","🍊"],["Sprite 0,5 л",8990,"drink","🥤"],["Fuse Tea 0,5 л",8990,"drink","🧃"],["Марс",13000,"snack","🍫"],["Сникерс",13000,"snack","🍫"],["Баунти",13000,"snack","🍫"],["Твикс",13000,"snack","🍫"],["Орео",24000,"snack","🍪"]];}
+  render();
+}
+function render(){
+  const P=window.P||[];
+  const q=document.getElementById('q').value.toLowerCase();
+  document.getElementById('grid').innerHTML=P.map((p,i)=>{
+    if(q&&!p[0].toLowerCase().includes(q))return'';
+    const inCart=cart[i]>0;
+    return `<div class="card"><div class="img"><img src="${img(p[0])}" onerror="this.remove()"></div><div class="title">${p[0]}</div><div class="price">${fmt(p[1])} сум</div><button class="add ${inCart?'in':''}" data-add="${i}">${inCart?'В корзине':'В корзину'}</button></div>`;
+  }).join('');
+  update();
+}
+function update(){
+  const P=window.P||[];let c=0,s=0;
+  for(let k in cart){if(P[k]){c+=cart[k];s+=P[k][1]*cart[k]}}
+  document.getElementById('c').textContent=c;
+  document.getElementById('sum').textContent=fmt(s)+' сум';
+  document.getElementById('list').innerHTML=Object.keys(cart).filter(k=>cart[k]>0&&P[k]).map(k=>{
+    const p=P[k],n=cart[k];
+    return `<div class="item"><img src="${img(p[0])}" onerror="this.remove()"><div class="info"><div>${p[0]}</div><div>${fmt(p[1])} сум</div></div><div class="qty"><button data-dec="${k}">-</button><span>${n}</span><button data-inc="${k}">+</button></div></div>`;
+  }).join('')||'Корзина пуста';
+}
+document.querySelectorAll('.navbtn[data-tab]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+b.dataset.tab).classList.add('active');
+  const shop=b.dataset.tab==='shop';
+  document.getElementById('sw').style.display=shop?'block':'none';
+  document.getElementById('open').style.display=shop?'block':'none';
+  if(b.dataset.tab==='taxi'){loadT();setTimeout(()=>{if(window._tm)window._tm.invalidateSize()},250);}
+});
+document.getElementById('grid').addEventListener('click',e=>{
+  const P=window.P||[];const b=e.target.closest('[data-add]');if(!b)return;
+  const i=+b.dataset.add;if(cart[i]){openDrawer();return;}
+  cart[i]=1;localStorage.setItem('cart',JSON.stringify(cart));render();openDrawer();
+});
+document.getElementById('list').addEventListener('click',e=>{
+  const P=window.P||[];const inc=e.target.closest('[data-inc]'),dec=e.target.closest('[data-dec]');
+  if(inc){const i=+inc.dataset.inc;if(P[i]){cart[i]++;localStorage.setItem('cart',JSON.stringify(cart));render();}return;}
+  if(dec){const i=+dec.dataset.dec;if(P[i]){cart[i]--;if(cart[i]<=0)delete cart[i];localStorage.setItem('cart',JSON.stringify(cart));render();}return;}
+});
 document.getElementById('q').addEventListener('input',render);
-const open=()=>{document.getElementById('dr').classList.add('on');document.getElementById('ov').classList.add('on')};
-document.getElementById('open').onclick=open;
-document.getElementById('close').onclick=()=>{document.getElementById('dr').classList.remove('on');document.getElementById('ov').classList.remove('on')};
-document.getElementById('ov').onclick=document.getElementById('close').onclick;
-document.getElementById('order').onclick=()=>{const P=window.P||[];let text='Заказ ANON SHOP%0A';let total=0;for(let k in cart){if(cart[k]>0&&P[k]){text+=encodeURIComponent(P[k][0]+' x'+cart[k]+' = '+P[k][1]*cart[k]+' сум')+'%0A';total+=P[k][1]*cart[k];}}text+=encodeURIComponent('Итого: '+total+' сум');window.open('https://t.me/'+TG+'?text='+text,'_blank');};
-let ta=null,tb=null,ma=null,mb=null,tr='Эконом';
-document.querySelectorAll('.tr button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tr button').forEach(x=>x.classList.remove('active'));b.classList.add('active');tr=b.dataset.t;calc();});
-function calc(){if(!ta||!tb)return;const d=ta.distanceTo(tb)/1000;let k=tr==='Эконом'?4000:tr==='Комфорт'?5500:8500;const p=Math.round(d*k/1000)*1000||5000;document.getElementById('tp').textContent=fmt(p)+' сум';document.getElementById('tp').dataset.v=p;document.getElementById('tcall').disabled=false;}
-function loadT(){window._tm=L.map('tmap',{zoomControl:false}).setView([41.311081,69.240562],13);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(window._tm);setTimeout(()=>window._tm.invalidateSize(),200);window._tm.on('click',e=>{if(!ta){ta=e.latlng;ma=L.marker(e.latlng).addTo(window._tm);document.getElementById('ta').value=e.latlng.lat.toFixed(5)+','+e.latlng.lng.toFixed(5);}else if(!tb){tb=e.latlng;mb=L.marker(e.latlng).addTo(window._tm);document.getElementById('tb').value=e.latlng.lat.toFixed(5)+','+e.latlng.lng.toFixed(5);calc();}});}
-document.getElementById('tcall').onclick=()=>{const n=document.getElementById('tname').value.trim(),ph=document.getElementById('tphone').value.trim();if(!n||!ph||!tb)return alert('Укажи откуда, куда, имя, телефон');const text='АНОН ТАКСИ%0AТариф: '+encodeURIComponent(tr)+'%0AОткуда: '+encodeURIComponent(document.getElementById('ta').value)+'%0AКуда: '+encodeURIComponent(document.getElementById('tb').value)+'%0AИмя: '+encodeURIComponent(n)+'%0AТелефон: '+encodeURIComponent(ph)+'%0AЦена: '+(document.getElementById('tp').dataset.v||0)+' сум';window.open('https://t.me/'+TG+'?text='+text,'_blank');};
+const openDrawer=()=>{document.getElementById('dr').classList.add('on');document.getElementById('ov').classList.add('on')};
+const closeDrawer=()=>{document.getElementById('dr').classList.remove('on');document.getElementById('ov').classList.remove('on')};
+document.getElementById('open').onclick=openDrawer;
+document.getElementById('close').onclick=closeDrawer;
+document.getElementById('ov').onclick=closeDrawer;
+document.getElementById('order').onclick=()=>{
+  const P=window.P||[];let text='Заказ ANON SHOP%0A';let total=0;
+  for(let k in cart){if(cart[k]>0&&P[k]){text+=encodeURIComponent(P[k][0]+' x'+cart[k]+' = '+P[k][1]*cart[k]+' сум')+'%0A';total+=P[k][1]*cart[k];}}
+  text+=encodeURIComponent('Итого: '+total+' сум');
+  window.open('https://t.me/'+TG+'?text='+text,'_blank');
+};
+
+/* ================= TAXI ================= */
+const FROM={lat:41.311081,lng:69.240562};
+const TARIFFS=[
+  {id:'Эконом',icon:'🚗',desc:'Дешёвые поездки',k:4000,eta:'3 мин'},
+  {id:'Комфорт',icon:'🚙',desc:'Машины поудобнее',k:5500,eta:'5 мин'},
+  {id:'Бизнес',icon:'🚘',desc:'Премиум-класс',k:8500,eta:'8 мин'}
+];
+let tr='Эконом',ta=null,tb=null,ma=null,mb=null,line=null,price=0;
+
+function calcPrice(t){
+  if(!tb)return 0;
+  const from=ta||L.latLng(FROM.lat,FROM.lng);
+  const d=from.distanceTo(tb)/1000;
+  return Math.max(5000,Math.round(d*t.k/1000)*1000);
+}
+function renderTariffs(){
+  document.getElementById('tariffs').innerHTML=TARIFFS.map(t=>{
+    const p=calcPrice(t);
+    return `<button class="tcard ${t.id===tr?'active':''}" data-t="${t.id}">
+      <span class="ticon">${t.icon}</span>
+      <span class="tinfo"><span class="tname">${t.id}<span class="teta">${t.eta}</span></span><span class="tdesc">${t.desc}</span></span>
+      <span class="tprice">${p?fmt(p)+' сум':'—'}</span>
+    </button>`;
+  }).join('');
+  const cur=TARIFFS.find(t=>t.id===tr);
+  price=calcPrice(cur);
+  document.getElementById('searchTar').textContent=tr+' · '+cur.eta;
+  document.getElementById('dprice').textContent=price?fmt(price)+' сум · наличные или карта':'Цена по договорённости';
+}
+document.getElementById('tariffs').addEventListener('click',e=>{
+  const b=e.target.closest('[data-t]');if(!b)return;
+  tr=b.dataset.t;renderTariffs();
+});
+document.querySelectorAll('.chips button').forEach(b=>b.onclick=()=>{
+  document.getElementById('tb').value=b.dataset.addr;
+  tb=null;
+  if(line){window._tm.removeLayer(line);line=null;}
+  if(mb){window._tm.removeLayer(mb);mb=null;}
+  renderTariffs();
+});
+
+function setPoint(which,ll){
+  if(which==='b'){
+    tb=ll;
+    if(mb)window._tm.removeLayer(mb);
+    mb=L.circleMarker(ll,{radius:7,color:'#21201f',weight:3,fillColor:'#ffcc00',fillOpacity:1}).addTo(window._tm);
+  }else{
+    ta=ll;
+    if(ma)window._tm.removeLayer(ma);
+    ma=L.circleMarker(ll,{radius:6,color:'#21201f',weight:2,fillColor:'#21201f',fillOpacity:1}).addTo(window._tm);
+  }
+  drawRoute();renderTariffs();
+}
+function drawRoute(){
+  if(line){window._tm.removeLayer(line);line=null;}
+  if(!tb)return;
+  const from=ta||L.latLng(FROM.lat,FROM.lng);
+  line=L.polyline([from,tb],{color:'#21201f',weight:4,dashArray:'1 8',opacity:.85}).addTo(window._tm);
+  window._tm.fitBounds([from,tb],{padding:[60,60],maxZoom:15});
+}
+function loadT(){
+  if(window._tm)return;
+  window._tm=L.map('tmap',{zoomControl:false,attributionControl:false}).setView([FROM.lat,FROM.lng],13);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(window._tm);
+  window._tm.on('click',e=>{
+    const dstEmpty=!document.getElementById('tb').value.trim();
+    if(dstEmpty)setPoint('b',e.latlng);
+    else setPoint('a',e.latlng);
+  });
+  renderTariffs();
+}
+document.getElementById('tcall').onclick=()=>{
+  const dst=document.getElementById('tb').value.trim();
+  const n=document.getElementById('tname').value.trim();
+  const ph=document.getElementById('tphone').value.trim();
+  if(!dst)return alert('Куда поедем? Укажи точку');
+  if(!n||!ph)return alert('Укажи имя и телефон');
+  document.getElementById('form').style.display='none';
+  document.getElementById('searching').style.display='flex';
+  renderTariffs();
+  const text='АНОН ТАКСИ%0AТариф: '+encodeURIComponent(tr)+'%0AОткуда: '+encodeURIComponent(document.getElementById('ta').value)+'%0AКуда: '+encodeURIComponent(dst)+'%0AИмя: '+encodeURIComponent(n)+'%0AТелефон: '+encodeURIComponent(ph)+'%0AЦена: '+(price||0)+' сум';
+  window.open('https://t.me/'+TG+'?text='+text,'_blank');
+  setTimeout(()=>{
+    if(document.getElementById('searching').style.display==='none')return;
+    document.getElementById('searching').style.display='none';
+    document.getElementById('driver').style.display='flex';
+    renderTariffs();
+  },2600);
+};
+function resetTaxi(){
+  document.getElementById('searching').style.display='none';
+  document.getElementById('driver').style.display='none';
+  document.getElementById('form').style.display='block';
+}
+document.getElementById('cancel1').onclick=resetTaxi;
+document.getElementById('cancel2').onclick=resetTaxi;
+document.getElementById('dcall').onclick=()=>location.href='tel:+998901234567';
+
 load();
 </script>
 </body>
