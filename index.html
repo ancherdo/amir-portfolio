@@ -46,6 +46,27 @@ nav.top::-webkit-scrollbar{display:none}
 .empty{opacity:.55;font-size:13px}
 .tgbtn{background:#229ED9;color:#fff;border:none;padding:14px;border-radius:14px;font-weight:800;font-family:Manrope;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px}
 .ghostbtn{background:transparent;border:1px solid #2a2621;color:#f3efe6;padding:12px;border-radius:12px;font-weight:700;font-family:Manrope;cursor:pointer;font-size:13px}
+
+/* ===== MENU / SERVICES ===== */
+.menuwrap{max-width:1100px;margin:0 auto;padding:18px 16px}
+.mtitle{font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.55;margin:4px 0 12px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:12px}
+.mitem{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px;border-radius:16px;cursor:pointer;border:1px solid #1f1b16;background:#14110d;transition:.2s}
+.mitem:hover{border-color:#3a3124;background:#191510}
+.mico{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:23px;background:#1e1a14;border:1px solid #2f2a22}
+.mitem span{font-size:12px;font-weight:700;text-align:center;line-height:1.2}
+
+/* ===== TRANSLATOR ===== */
+.trwrap{max-width:640px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.selrow{display:flex;gap:8px;align-items:center}
+.selrow select{flex:1;padding:11px;border-radius:12px;border:1px solid #2a2621;background:#0d0b09;color:#f3efe6;font-family:Manrope;font-size:13px;outline:none}
+.selrow .ghostbtn{padding:11px 14px}
+.out{background:#0d0b09;border:1px solid #2a2621;border-radius:12px;padding:14px;font-size:14px;line-height:1.5;min-height:60px;white-space:pre-wrap}
+
+/* ===== ACCOUNT ===== */
+.avatar{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#d4af37,#8a6d1f);color:#0d0b09;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;margin:0 auto}
+.userchip.avatar-chip{display:flex;align-items:center;gap:8px}
+.userchip .mini{width:22px;height:22px;border-radius:50%;background:#d4af37;color:#0d0b09;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
 .page{display:none}
 .page.active{display:block}
 .wrap{max-width:1100px;margin:0 auto;padding:16px}
@@ -180,6 +201,7 @@ nav.top::-webkit-scrollbar{display:none}
   <div class="logo">ANON <span>SHOP</span></div>
   <div class="search" id="sw"><input id="q" placeholder="Поиск..."></div>
   <nav class="top">
+    <button class="navbtn" data-tab="menu">МЕНЮ</button>
     <button class="navbtn active" data-tab="shop">МАГАЗИН</button>
     <button class="navbtn" data-tab="taxi">ТАКСИ</button>
     <button class="navbtn" data-tab="games">ИГРЫ</button>
@@ -191,8 +213,45 @@ nav.top::-webkit-scrollbar{display:none}
   <button class="cart" id="open">Корзина (<span id="c">0</span>)</button>
 </header>
 
-<div class="page active" id="tab-shop">
+<div class="page" id="tab-shop">
   <div class="wrap"><div class="grid" id="grid"></div></div>
+</div>
+
+<div class="page" id="tab-menu">
+  <div class="menuwrap">
+    <div class="mtitle">Сервисы ANON</div>
+    <div class="mgrid" id="mgrid"></div>
+  </div>
+</div>
+
+<div class="page" id="tab-translate">
+  <div class="trwrap">
+    <div class="panel">
+      <div class="selrow">
+        <select id="tfrom">
+          <option value="ru">Русский</option>
+          <option value="uz">Узбекский</option>
+          <option value="en">Английский</option>
+        </select>
+        <button class="ghostbtn" id="tswap">⇄</button>
+        <select id="tto">
+          <option value="uz">Узбекский</option>
+          <option value="ru">Русский</option>
+          <option value="en">Английский</option>
+        </select>
+      </div>
+      <textarea id="tsrc" rows="4" placeholder="Введи текст..."></textarea>
+      <button class="tgbtn" id="tgo">Перевести</button>
+    </div>
+    <div class="panel" id="tout" style="display:none">
+      <h3>Перевод</h3>
+      <div class="out" id="tres"></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="tab-account">
+  <div class="wallet" id="account"></div>
 </div>
 
 <div class="page" id="tab-taxi">
@@ -293,15 +352,15 @@ nav.top::-webkit-scrollbar{display:none}
 </div>
 
 <nav class="bottomnav">
+  <button data-tab="menu"><span class="ic">☰</span><span>Меню</span></button>
   <button class="active" data-tab="shop"><span class="ic">🛍</span><span>Магазин</span></button>
   <button data-tab="taxi"><span class="ic">🚕</span><span>Такси</span></button>
   <button data-tab="games"><span class="ic">🎮</span><span>Игры</span></button>
-  <button data-tab="nav"><span class="ic">🧭</span><span>Навигатор</span></button>
   <button data-tab="wallet"><span class="ic">💳</span><span>Кошелёк</span></button>
 </nav>
 
 <script>
-const TG="intellect_anon";
+const TG="amirmaxmudov7";
 const fmt=n=>n.toLocaleString('ru-RU');
 function img(n){return 'img/'+encodeURIComponent(n)+'.png';}
 function fixH(){document.documentElement.style.setProperty('--hh',document.querySelector('header').offsetHeight+'px');}
@@ -369,9 +428,11 @@ function go(tab){
   if(tab==='taxi'){loadT();setTimeout(()=>{if(window._tm)window._tm.invalidateSize()},250);}
   if(tab==='nav'){loadN();setTimeout(()=>{if(window._nm)window._nm.invalidateSize()},250);}
   if(tab==='wallet')renderWallet();
+  if(tab==='account')renderAccount();
+  if(tab==='menu')renderMenu();
 }
 document.querySelectorAll('[data-tab]').forEach(b=>{if(b.tagName==='BUTTON')b.onclick=()=>go(b.dataset.tab)});
-if(location.hash==='#taxi')go('taxi');else if(location.hash==='#games')go('games');else if(location.hash==='#nav')go('nav');else if(location.hash==='#wallet')go('wallet');
+if(location.hash==='#taxi')go('taxi');else if(location.hash==='#games')go('games');else if(location.hash==='#nav')go('nav');else if(location.hash==='#wallet')go('wallet');else if(location.hash==='#menu')go('menu');else if(location.hash==='#account')go('account');else if(location.hash==='#translate')go('translate');else go('shop');
 
 /* ---------- TAXI ---------- */
 const FROM={lat:41.311081,lng:69.240562};
@@ -638,14 +699,20 @@ document.addEventListener('click',e=>{
 });
 
 /* ---------- WALLET / TELEGRAM ---------- */
-const TGH='intellect_anon',U_KEY='anon_users',ME_KEY='anon_me';
+const TGH='amirmaxmudov7',U_KEY='anon_users',ME_KEY='anon_me';
 const users=()=>{try{return JSON.parse(localStorage.getItem(U_KEY)||'{}')}catch(e){return{}}};
 const saveUsers=u=>localStorage.setItem(U_KEY,JSON.stringify(u));
 const me=()=>localStorage.getItem(ME_KEY)||'';
 const norm=s=>s.trim().replace(/^@/,'').toLowerCase().replace(/[^a-z0-9_]/g,'');
 const myAcc=()=>users()[me()]||null;
-function updChip(){const a=myAcc();document.getElementById('uchip').textContent=a?'👤 @'+me():'Войти';}
-document.getElementById('uchip').onclick=()=>go('wallet');
+function updChip(){
+  const a=myAcc();const el=document.getElementById('uchip');
+  if(a){
+    el.style.display='flex';el.style.alignItems='center';el.style.gap='8px';
+    el.innerHTML=`<span class="mini">${(a.name||me()).trim().slice(0,1).toUpperCase()}</span>@${me()}`;
+  }else{el.textContent='Войти';el.style.display='inline-block';}
+}
+document.getElementById('uchip').onclick=()=>go('account');
 function login(v){
   const u=norm(v);
   if(u.length<3)return alert('Введи ник в Telegram, например @anon');
@@ -729,6 +796,96 @@ function formTop(){
     all[me()]=a;saveUsers(all);renderWallet();formTop();
   };
 }
+/* ---------- MENU ---------- */
+const SERVICES=[
+  {t:'shop',i:'🛍',n:'Маркет'},
+  {t:'taxi',i:'🚕',n:'Такси'},
+  {t:'nav',i:'🗺',n:'Карты'},
+  {t:'games',i:'🎮',n:'Игры'},
+  {t:'translate',i:'🌐',n:'Переводчик'},
+  {t:'wallet',i:'💳',n:'Кошелёк'},
+  {t:'account',i:'👤',n:'Аккаунт'},
+  {href:'admin.html',i:'⚙️',n:'Админ'}
+];
+function renderMenu(){
+  document.getElementById('mgrid').innerHTML=SERVICES.map(s=>
+    `<div class="mitem" ${s.href?`data-href="${s.href}"`:`data-go="${s.t}"`}><div class="mico">${s.i}</div><span>${s.n}</span></div>`
+  ).join('');
+  document.querySelectorAll('.mitem[data-go]').forEach(m=>m.onclick=()=>go(m.dataset.go));
+  document.querySelectorAll('.mitem[data-href]').forEach(m=>m.onclick=()=>location.href=m.dataset.href);
+}
+
+/* ---------- TRANSLATOR ---------- */
+document.getElementById('tswap').onclick=()=>{
+  const a=document.getElementById('tfrom'),b=document.getElementById('tto');
+  const t=a.value;a.value=b.value;b.value=t;
+};
+document.getElementById('tgo').onclick=async()=>{
+  const q=document.getElementById('tsrc').value.trim();
+  const from=document.getElementById('tfrom').value,to=document.getElementById('tto').value;
+  if(!q)return;
+  document.getElementById('tout').style.display='block';
+  document.getElementById('tres').textContent='Перевожу…';
+  try{
+    const r=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(q)+'&langpair='+encodeURIComponent(from+'|'+to));
+    const j=await r.json();
+    document.getElementById('tres').textContent=(j.responseData&&j.responseData.translatedText)||'Не удалось перевести';
+  }catch(e){document.getElementById('tres').textContent='Ошибка сети. Проверь интернет.';}
+};
+
+/* ---------- ACCOUNT ---------- */
+function renderAccount(){
+  const box=document.getElementById('account');const a=myAcc();updChip();
+  if(!a){
+    box.innerHTML=`<div class="panel">
+      <h3>Создать аккаунт</h3>
+      <div class="empty">Регистрация через Telegram — пароль не нужен.</div>
+      <input id="aname" placeholder="Имя и фамилия">
+      <input id="anick" placeholder="@ник в Telegram" autocomplete="username">
+      <input id="aphone" placeholder="+998 90 000 00 00" inputmode="tel">
+      <button class="tgbtn" id="areg">✈️ Создать аккаунт</button>
+      <div class="empty">Уже есть аккаунт — войди по нику в разделе Кошелёк.</div>
+    </div>`;
+    document.getElementById('areg').onclick=()=>{
+      const name=document.getElementById('aname').value.trim();
+      const nick=norm(document.getElementById('anick').value);
+      const phone=document.getElementById('aphone').value.trim();
+      if(name.length<2)return alert('Введи имя');
+      if(nick.length<3)return alert('Введи ник в Telegram');
+      if(phone.length<7)return alert('Введи телефон');
+      const all=users();
+      if(!all[nick])all[nick]={balance:0,hist:[],created:Date.now()};
+      all[nick].name=name;all[nick].phone=phone;
+      saveUsers(all);localStorage.setItem(ME_KEY,nick);
+      window.open('https://t.me/'+TGH,'_blank');
+      renderAccount();
+    };
+    return;
+  }
+  const initials=((a.name||me()).trim().slice(0,1)||'A').toUpperCase();
+  box.innerHTML=`
+    <div class="panel" style="align-items:center;text-align:center">
+      <div class="avatar">${initials}</div>
+      <div style="font-size:18px;font-weight:800">${a.name||'@'+me()}</div>
+      <div class="empty">@${me()}${a.phone?' · '+a.phone:''}</div>
+      <div class="empty">В аккаунте с ${new Date(a.created||Date.now()).toLocaleDateString('ru-RU')}</div>
+    </div>
+    <div class="balance">
+      <div class="lbl">Баланс</div>
+      <div class="val">${fmt(a.balance||0)} сум</div>
+      <div class="wbtns"><button class="solid" id="aTop">Пополнить</button><button id="aSend">Перевести</button></div>
+    </div>
+    <button class="ghostbtn" id="aOut">Выйти из аккаунта</button>
+    <button class="ghostbtn" id="aDel" style="color:#ff8a8a;border-color:#4a2a2a">Удалить аккаунт</button>`;
+  document.getElementById('aTop').onclick=()=>go('wallet');
+  document.getElementById('aSend').onclick=()=>go('wallet');
+  document.getElementById('aOut').onclick=()=>{localStorage.removeItem(ME_KEY);renderAccount();};
+  document.getElementById('aDel').onclick=()=>{
+    if(!confirm('Удалить аккаунт @'+me()+'?'))return;
+    const all=users();delete all[me()];saveUsers(all);localStorage.removeItem(ME_KEY);renderAccount();
+  };
+}
+
 updChip();
 
 load();
