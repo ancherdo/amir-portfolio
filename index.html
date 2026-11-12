@@ -6,7 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>ANON</title>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -196,6 +196,131 @@ nav.top::-webkit-scrollbar{display:none}
   .taxi,.navwrap{height:calc(100dvh - var(--hh))}
   .sheet{left:50%;right:auto;transform:translateX(-50%);width:440px;border-radius:24px;bottom:20px}
 }
+/* ================= DESIGN v5 ================= */
+:root{
+  --bg:#07060a;--surface:#100e13;--line:#262130;
+  --gold:#e7c46b;--gold2:#b8892f;--text:#f5f1e8;--muted:#9b9384;
+}
+body{
+  background:
+    radial-gradient(1100px 560px at 50% -220px, rgba(231,196,107,.15), transparent 62%),
+    radial-gradient(800px 500px at 105% 5%, rgba(231,196,107,.05), transparent 55%),
+    var(--bg);
+  color:var(--text);padding-bottom:60px;-webkit-font-smoothing:antialiased;
+}
+header{
+  background:rgba(8,7,11,.82);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);
+  backdrop-filter:blur(16px) saturate(140%);
+  border-bottom:1px solid rgba(231,196,107,.14);
+  padding:12px 18px;gap:10px;
+}
+.logo{
+  font-family:'Unbounded',Manrope,sans-serif;font-size:15px;letter-spacing:.14em;
+  background:linear-gradient(180deg,#fff8e6,var(--gold) 55%,var(--gold2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.logo span{color:transparent}
+.search input{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:10px 16px;transition:.2s}
+.search input:focus{outline:none;border-color:rgba(231,196,107,.55);box-shadow:0 0 0 4px rgba(231,196,107,.08)}
+.navbtn{
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
+  color:#cfc8b8;padding:8px 15px;font-size:12px;letter-spacing:.04em;transition:.2s;
+}
+.navbtn:hover{border-color:rgba(231,196,107,.45);color:var(--gold);background:rgba(231,196,107,.07)}
+.navbtn.active{
+  border-color:transparent;color:#100d08;
+  background:linear-gradient(180deg,#f3d98d,var(--gold) 60%,#c99b3d);
+  box-shadow:0 6px 22px rgba(231,196,107,.25);
+}
+.cart{
+  background:linear-gradient(180deg,#f3d98d,var(--gold) 55%,#c99b3d);color:#100d08;
+  box-shadow:0 8px 24px rgba(231,196,107,.22);transition:.2s;
+}
+.cart:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(231,196,107,.32)}
+.userchip{background:rgba(255,255,255,.04);border:1px solid rgba(231,196,107,.35);color:var(--gold)}
+.page.active{animation:fadeUp .3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* shop */
+.shophead{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:2px 0 16px;flex-wrap:wrap}
+.sh1{font-family:'Unbounded',Manrope,sans-serif;font-size:21px;letter-spacing:.05em;
+  background:linear-gradient(180deg,#fff8e6,var(--gold) 60%,var(--gold2));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.sh2{color:var(--muted);font-size:13px;margin-top:5px}
+.filters{display:flex;gap:8px;overflow:auto;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.fchip{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#cfc8b8;
+  padding:8px 14px;border-radius:999px;font-weight:700;font-size:12px;cursor:pointer;font-family:Manrope;
+  white-space:nowrap;transition:.2s}
+.fchip.active{background:linear-gradient(180deg,#f3d98d,var(--gold) 60%,#c99b3d);color:#100d08;
+  border-color:transparent;box-shadow:0 6px 18px rgba(231,196,107,.22)}
+.grid{gap:14px;grid-template-columns:repeat(auto-fill,minmax(158px,1fr))}
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+  border:1px solid rgba(255,255,255,.075);border-radius:18px;padding:12px;gap:10px;position:relative;
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),border-color .25s,box-shadow .25s;
+}
+.card:hover{transform:translateY(-5px);border-color:rgba(231,196,107,.45);
+  box-shadow:0 18px 40px rgba(0,0,0,.55),0 0 0 1px rgba(231,196,107,.12)}
+.img{height:104px;border-radius:13px;background:radial-gradient(circle at 50% 40%,#241f18,#141117)}
+.img img{transition:transform .45s ease}
+.card:hover .img img{transform:scale(1.07)}
+.title{font-size:13px;line-height:1.3;min-height:34px}
+.price{color:var(--gold);font-size:17px}
+.add{background:linear-gradient(180deg,#f3d98d,var(--gold) 55%,#c99b3d);color:#100d08;
+  border-radius:11px;padding:10px;font-size:13px;box-shadow:0 6px 18px rgba(231,196,107,.18);transition:.2s}
+.add:hover{filter:brightness(1.06)}
+.add.in{background:rgba(231,196,107,.08);color:var(--gold);border:1px solid rgba(231,196,107,.5);box-shadow:none}
+
+/* bottom nav */
+.bottomnav{background:rgba(9,8,12,.92);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  border-top:1px solid rgba(231,196,107,.14);height:60px}
+.bottomnav button{color:#7d7669;font-size:10.5px;position:relative;transition:.2s}
+.bottomnav button .ic{filter:grayscale(1) opacity(.75);transition:.2s}
+.bottomnav button.active{color:var(--gold)}
+.bottomnav button.active .ic{filter:none;transform:translateY(-1px)}
+.bottomnav button.active::before{content:"";position:absolute;top:0;width:26px;height:2px;
+  border-radius:0 0 4px 4px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+/* menu tiles */
+.mgrid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px}
+.mitem{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+  border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:16px 8px;transition:.25s}
+.mitem:hover{transform:translateY(-4px);border-color:rgba(231,196,107,.45);box-shadow:0 16px 34px rgba(0,0,0,.5)}
+.mico{width:54px;height:54px;border:1px solid rgba(231,196,107,.25);
+  background:radial-gradient(circle at 30% 25%,rgba(231,196,107,.22),rgba(231,196,107,.04));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+
+/* panels / wallet */
+.panel{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012));
+  border:1px solid rgba(255,255,255,.075);border-radius:18px}
+.panel input,.panel textarea,.contacts input,.selrow select{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);transition:.2s}
+.panel input:focus,.panel textarea:focus,.selrow select:focus{
+  border-color:rgba(231,196,107,.5);box-shadow:0 0 0 4px rgba(231,196,107,.08);outline:none}
+.balance{
+  background:
+    radial-gradient(600px 220px at 0% 0%, rgba(231,196,107,.18), transparent 62%),
+    linear-gradient(140deg,#191410,#241c12 55%,#120f0c);
+  border:1px solid rgba(231,196,107,.3);border-radius:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.balance .val{font-size:38px;text-shadow:0 0 26px rgba(231,196,107,.35)}
+.wbtns button{border-radius:13px;transition:.2s}
+.wbtns button.solid{background:linear-gradient(180deg,#f3d98d,var(--gold) 55%,#c99b3d);color:#100d08;border-color:transparent}
+.wbtns button:hover{transform:translateY(-1px)}
+.tgbtn{background:linear-gradient(180deg,#2aa8e0,#1c8ec4);box-shadow:0 10px 26px rgba(34,158,217,.25);transition:.2s}
+.tgbtn:hover{filter:brightness(1.05)}
+.ghostbtn{transition:.2s}
+.ghostbtn:hover{border-color:rgba(231,196,107,.45);color:var(--gold)}
+.avatar{box-shadow:0 12px 30px rgba(231,196,107,.25)}
+.drawer{background:linear-gradient(180deg,#121017,#0b0a0e);border-left:1px solid rgba(231,196,107,.18);box-shadow:-20px 0 60px rgba(0,0,0,.6)}
+.checkout{background:linear-gradient(180deg,#f3d98d,var(--gold) 55%,#c99b3d);box-shadow:0 10px 26px rgba(231,196,107,.22)}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#2a2431;border-radius:99px}
+::-webkit-scrollbar-track{background:transparent}
+@media(min-width:820px){body{padding-bottom:0}}
 </style>
 </head>
 <body>
@@ -217,7 +342,20 @@ nav.top::-webkit-scrollbar{display:none}
 </header>
 
 <div class="page" id="tab-shop">
-  <div class="wrap"><div class="grid" id="grid"></div></div>
+  <div class="wrap">
+    <div class="shophead">
+      <div>
+        <div class="sh1">ANON SHOP</div>
+        <div class="sh2">Снеки и напитки · рядом со школой</div>
+      </div>
+      <div class="filters" id="filters">
+        <button class="fchip active" data-f="all">Все</button>
+        <button class="fchip" data-f="snack">Снеки</button>
+        <button class="fchip" data-f="drink">Напитки</button>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
 </div>
 
 <div class="page" id="tab-menu">
@@ -373,6 +511,13 @@ fixH();window.addEventListener('resize',fixH);
 
 /* ---------- CART ---------- */
 let cart={};try{cart=JSON.parse(localStorage.getItem('cart')||'{}')}catch(e){}
+let catFilter='all';
+document.getElementById('filters').addEventListener('click',e=>{
+  const b=e.target.closest('[data-f]');if(!b)return;
+  catFilter=b.dataset.f;
+  document.querySelectorAll('.fchip').forEach(x=>x.classList.toggle('active',x.dataset.f===catFilter));
+  render();
+});
 async function load(){
   try{const r=await fetch('products.json',{cache:'no-store'});window.P=await r.json();}
   catch(e){window.P=[["Чипсы Pringles",16000,"snack","🥔"],["Чипсы Lay's 60 г",17000,"snack","🥔"],["Жвачка Dirol (5 шт)",4000,"snack","🫧"],["Чай Lipton зелёный 0,5 л",8990,"drink","🍵"],["Coca-Cola 0,5 л",8999,"drink","🥤"],["Pepsi 0,5 л",8490,"drink","🥤"],["Fanta 0,5 л",8990,"drink","🍊"],["Sprite 0,5 л",8990,"drink","🥤"],["Fuse Tea 0,5 л",8990,"drink","🧃"],["Марс",13000,"snack","🍫"],["Сникерс",13000,"snack","🍫"],["Баунти",13000,"snack","🍫"],["Твикс",13000,"snack","🍫"],["Орео",24000,"snack","🍪"]];}
@@ -380,11 +525,15 @@ async function load(){
 }
 function render(){
   const P=window.P||[];const q=document.getElementById('q').value.toLowerCase();
-  document.getElementById('grid').innerHTML=P.map((p,i)=>{
-    if(q&&!p[0].toLowerCase().includes(q))return'';
+  const list=P.map((p,i)=>({p,i})).filter(({p})=>{
+    if(catFilter!=='all'&&(p[2]||'snack')!==catFilter)return false;
+    if(q&&!p[0].toLowerCase().includes(q))return false;
+    return true;
+  });
+  document.getElementById('grid').innerHTML=list.map(({p,i})=>{
     const inCart=cart[i]>0;
-    return `<div class="card"><div class="img"><img src="${img(p[0])}" onerror="this.remove()"></div><div class="title">${p[0]}</div><div class="price">${fmt(p[1])} сум</div><button class="add ${inCart?'in':''}" data-add="${i}">${inCart?'В корзине':'В корзину'}</button></div>`;
-  }).join('');
+    return `<div class="card"><div class="img"><img src="${img(p[0])}" loading="lazy" onerror="this.remove()"></div><div class="title">${p[0]}</div><div class="price">${fmt(p[1])} сум</div><button class="add ${inCart?'in':''}" data-add="${i}">${inCart?'В корзине':'В корзину'}</button></div>`;
+  }).join('')||'<div style="opacity:.5;padding:20px">Ничего не найдено</div>';
   update();
 }
 function update(){
