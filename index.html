@@ -320,6 +320,10 @@ header{
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:#2a2431;border-radius:99px}
 ::-webkit-scrollbar-track{background:transparent}
+/* bottom nav: only menu */
+.bottomnav{justify-content:center}
+.bottomnav button{flex:0 0 auto;flex-direction:row;gap:8px;padding:0 26px;font-size:13px;border-radius:999px}
+.bottomnav button .ic{font-size:16px}
 @media(min-width:820px){body{padding-bottom:0}}
 </style>
 </head>
@@ -328,14 +332,7 @@ header{
   <div class="logo">ANON <span>SHOP</span></div>
   <div class="search" id="sw"><input id="q" placeholder="Поиск..."></div>
   <nav class="top">
-    <button class="navbtn" data-tab="menu">МЕНЮ</button>
-    <button class="navbtn active" data-tab="shop">МАГАЗИН</button>
-    <button class="navbtn" data-tab="taxi">ТАКСИ</button>
-    <button class="navbtn" data-tab="games">ИГРЫ</button>
-    <button class="navbtn" data-tab="translate">ПЕРЕВОДЧИК</button>
-    <button class="navbtn" data-tab="nav">НАВИГАТОР</button>
-    <button class="navbtn" data-tab="wallet">КОШЕЛЁК</button>
-    <a class="navbtn" href="admin.html">АДМИН</a>
+    <button class="navbtn" data-tab="menu">☰ МЕНЮ</button>
   </nav>
   <button class="userchip" id="uchip">Войти</button>
   <button class="cart" id="open">Корзина (<span id="c">0</span>)</button>
@@ -496,10 +493,6 @@ header{
 
 <nav class="bottomnav">
   <button data-tab="menu"><span class="ic">☰</span><span>Меню</span></button>
-  <button class="active" data-tab="shop"><span class="ic">🛍</span><span>Магазин</span></button>
-  <button data-tab="taxi"><span class="ic">🚕</span><span>Такси</span></button>
-  <button data-tab="games"><span class="ic">🎮</span><span>Игры</span></button>
-  <button data-tab="wallet"><span class="ic">💳</span><span>Кошелёк</span></button>
 </nav>
 
 <script>
