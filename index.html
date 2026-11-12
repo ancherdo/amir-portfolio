@@ -320,6 +320,21 @@ header{
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:#2a2431;border-radius:99px}
 ::-webkit-scrollbar-track{background:transparent}
+/* checkout */
+.cform{display:flex;flex-direction:column;gap:9px;padding:0 16px 18px}
+.cform input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.04);color:var(--text);font-family:Manrope;font-size:14px;outline:none;transition:.2s}
+.cform input:focus{border-color:rgba(231,196,107,.55);box-shadow:0 0 0 4px rgba(231,196,107,.08)}
+.tglink{background:none;border:none;color:#8fb8d6;font-family:Manrope;font-size:12.5px;padding:6px;cursor:pointer}
+.tglink:hover{color:#bfe0f7;text-decoration:underline}
+.csuccess{display:none;flex-direction:column;align-items:center;gap:10px;padding:34px 22px 24px;text-align:center}
+.okico{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:30px;color:#100d08;background:linear-gradient(180deg,#f3d98d,var(--gold) 55%,#c99b3d);
+  box-shadow:0 12px 32px rgba(231,196,107,.3)}
+.okt{font-family:'Unbounded',Manrope,sans-serif;font-size:17px;letter-spacing:.04em}
+.okn{color:var(--gold);font-weight:800;font-size:14px}
+.okh{color:var(--muted);font-size:12.5px;line-height:1.5;margin-bottom:6px}
+
 /* bottom nav: only menu */
 .bottomnav{justify-content:center}
 .bottomnav button{flex:0 0 auto;flex-direction:row;gap:8px;padding:0 26px;font-size:13px;border-radius:999px}
@@ -329,7 +344,7 @@ header{
 </head>
 <body>
 <header>
-  <div class="logo">ANON <span>SHOP</span></div>
+  <div class="logo" id="logo" style="cursor:pointer">ANON <span>SHOP</span></div>
   <div class="search" id="sw"><input id="q" placeholder="Поиск..."></div>
   <nav class="top">
     <button class="navbtn" data-tab="menu">☰ МЕНЮ</button>
@@ -481,7 +496,20 @@ header{
   <div class="dhead"><b>Корзина</b><button id="close" style="background:none;border:none;color:#f3efe6;font-size:16px">✕</button></div>
   <div class="list" id="list"></div>
   <div class="total"><span>Итого</span><span id="sum">0 сум</span></div>
-  <button class="checkout" id="order">Оформить в Telegram</button>
+  <div class="cform" id="cform">
+    <input id="cname" placeholder="Имя">
+    <input id="cphone" placeholder="Телефон +998" inputmode="tel">
+    <input id="caddr" placeholder="Куда принести (класс / кабинет)">
+    <button class="checkout" id="order" style="margin:0">Оформить заказ</button>
+    <button class="tglink" id="tgorder">Или отправить в Telegram</button>
+  </div>
+  <div class="csuccess" id="csuccess" style="display:none">
+    <div class="okico">✓</div>
+    <div class="okt">Заказ принят</div>
+    <div class="okn" id="cnum"></div>
+    <div class="okh">Мы свяжемся с тобой в Telegram</div>
+    <button class="checkout" id="cdone" style="margin:0">Готово</button>
+  </div>
 </div>
 
 <div class="gmodal" id="gmodal">
@@ -497,6 +525,16 @@ header{
 
 <script>
 const TG="amirmaxmudov7";
+const SERVICES=[
+  {t:'shop',i:'🛍',n:'Маркет'},
+  {t:'taxi',i:'🚕',n:'Такси'},
+  {t:'nav',i:'🗺',n:'Карты'},
+  {t:'games',i:'🎮',n:'Игры'},
+  {t:'translate',i:'🌐',n:'Переводчик'},
+  {t:'wallet',i:'💳',n:'Кошелёк'},
+  {t:'account',i:'👤',n:'Аккаунт'},
+  {href:'admin.html',i:'⚙️',n:'Админ'}
+];
 const fmt=n=>n.toLocaleString('ru-RU');
 function img(n){return 'img/'+encodeURIComponent(n)+'.png';}
 function fixH(){document.documentElement.style.setProperty('--hh',document.querySelector('header').offsetHeight+'px');}
@@ -555,11 +593,51 @@ const closeDrawer=()=>{document.getElementById('dr').classList.remove('on');docu
 document.getElementById('open').onclick=openDrawer;
 document.getElementById('close').onclick=closeDrawer;
 document.getElementById('ov').onclick=closeDrawer;
+function orderData(){
+  const P=window.P||[];const items=[];let total=0;
+  for(let k in cart){if(cart[k]>0&&P[k]){items.push({name:P[k][0],qty:cart[k],price:P[k][1]});total+=P[k][1]*cart[k];}}
+  return {items,total};
+}
+function saveOrder(o){
+  let arr=[];try{arr=JSON.parse(localStorage.getItem('anon_orders')||'[]')}catch(e){}
+  arr.unshift(o);localStorage.setItem('anon_orders',JSON.stringify(arr));
+}
+function tgText(o){
+  let t='Заказ ANON SHOP%0A';
+  o.items.forEach(i=>{t+=encodeURIComponent(i.name+' x'+i.qty+' = '+i.price*i.qty+' сум')+'%0A';});
+  t+=encodeURIComponent('Итого: '+o.total+' сум')+'%0A';
+  t+=encodeURIComponent('Имя: '+o.name+'%0AТелефон: '+o.phone+(o.addr?'%0AКуда: '+o.addr:''));
+  return t;
+}
 document.getElementById('order').onclick=()=>{
-  const P=window.P||[];let text='Заказ ANON SHOP%0A';let total=0;
-  for(let k in cart){if(cart[k]>0&&P[k]){text+=encodeURIComponent(P[k][0]+' x'+cart[k]+' = '+P[k][1]*cart[k]+' сум')+'%0A';total+=P[k][1]*cart[k];}}
-  text+=encodeURIComponent('Итого: '+total+' сум');
-  window.open('https://t.me/'+TG+'?text='+text,'_blank');
+  const {items,total}=orderData();
+  if(!items.length)return alert('Корзина пуста');
+  const name=document.getElementById('cname').value.trim();
+  const phone=document.getElementById('cphone').value.trim();
+  const addr=document.getElementById('caddr').value.trim();
+  if(name.length<2)return alert('Напиши имя');
+  if(phone.length<7)return alert('Напиши телефон');
+  const o={id:'A'+Date.now().toString().slice(-6),type:'shop',items,total,name,phone,addr,ts:Date.now()};
+  saveOrder(o);
+  cart={};localStorage.setItem('cart','{}');render();
+  document.getElementById('cform').style.display='none';
+  document.getElementById('list').style.display='none';
+  document.querySelector('.total').style.display='none';
+  document.getElementById('cnum').textContent='Заказ №'+o.id+' · '+fmt(total)+' сум';
+  document.getElementById('csuccess').style.display='flex';
+};
+document.getElementById('tgorder').onclick=()=>{
+  const {items,total}=orderData();
+  if(!items.length)return alert('Корзина пуста');
+  const o={items,total,name:document.getElementById('cname').value.trim()||'—',phone:document.getElementById('cphone').value.trim()||'—',addr:document.getElementById('caddr').value.trim()};
+  window.open('https://t.me/'+TG+'?text='+tgText(o),'_blank');
+};
+document.getElementById('cdone').onclick=()=>{
+  document.getElementById('cform').style.display='flex';
+  document.getElementById('list').style.display='flex';
+  document.querySelector('.total').style.display='flex';
+  document.getElementById('csuccess').style.display='none';
+  closeDrawer();
 };
 
 /* ---------- TABS ---------- */
@@ -579,7 +657,7 @@ function go(tab){
   if(tab==='menu')renderMenu();
 }
 document.querySelectorAll('[data-tab]').forEach(b=>{if(b.tagName==='BUTTON')b.onclick=()=>go(b.dataset.tab)});
-if(location.hash==='#taxi')go('taxi');else if(location.hash==='#games')go('games');else if(location.hash==='#nav')go('nav');else if(location.hash==='#wallet')go('wallet');else if(location.hash==='#menu')go('menu');else if(location.hash==='#account')go('account');else if(location.hash==='#translate')go('translate');else go('shop');
+if(location.hash==='#taxi')go('taxi');else if(location.hash==='#games')go('games');else if(location.hash==='#nav')go('nav');else if(location.hash==='#wallet')go('wallet');else if(location.hash==='#menu')go('menu');else if(location.hash==='#account')go('account');else if(location.hash==='#translate')go('translate');else go('menu');
 
 /* ---------- TAXI ---------- */
 const FROM={lat:41.311081,lng:69.240562};
@@ -653,8 +731,11 @@ document.getElementById('tcall').onclick=()=>{
   document.getElementById('form').style.display='none';
   document.getElementById('searching').style.display='flex';
   renderTariffs();
-  const text='АНОН ТАКСИ%0AТариф: '+encodeURIComponent(tr)+'%0AОткуда: '+encodeURIComponent(document.getElementById('ta').value)+'%0AКуда: '+encodeURIComponent(dst)+'%0AИмя: '+encodeURIComponent(n)+'%0AТелефон: '+encodeURIComponent(ph)+'%0AЦена: '+(price||0)+' сум';
-  window.open('https://t.me/'+TG+'?text='+text,'_blank');
+  saveOrder({
+    id:'T'+Date.now().toString().slice(-6),type:'taxi',
+    items:[{name:'Такси '+tr,qty:1,price:price||0}],total:price||0,
+    name:n,phone:ph,addr:dst,from:document.getElementById('ta').value,ts:Date.now()
+  });
   setTimeout(()=>{
     if(document.getElementById('searching').style.display==='none')return;
     document.getElementById('searching').style.display='none';
@@ -860,6 +941,7 @@ function updChip(){
   }else{el.textContent='Войти';el.style.display='inline-block';}
 }
 document.getElementById('uchip').onclick=()=>go('account');
+document.getElementById('logo').onclick=()=>go('menu');
 function login(v){
   const u=norm(v);
   if(u.length<3)return alert('Введи ник в Telegram, например @anon');
@@ -944,16 +1026,6 @@ function formTop(){
   };
 }
 /* ---------- MENU ---------- */
-const SERVICES=[
-  {t:'shop',i:'🛍',n:'Маркет'},
-  {t:'taxi',i:'🚕',n:'Такси'},
-  {t:'nav',i:'🗺',n:'Карты'},
-  {t:'games',i:'🎮',n:'Игры'},
-  {t:'translate',i:'🌐',n:'Переводчик'},
-  {t:'wallet',i:'💳',n:'Кошелёк'},
-  {t:'account',i:'👤',n:'Аккаунт'},
-  {href:'admin.html',i:'⚙️',n:'Админ'}
-];
 function renderMenu(){
   document.getElementById('mgrid').innerHTML=SERVICES.map(s=>
     `<div class="mitem" ${s.href?`data-href="${s.href}"`:`data-go="${s.t}"`}><div class="mico">${s.i}</div><span>${s.n}</span></div>`

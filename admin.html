@@ -66,6 +66,12 @@ main{max-width:1000px;margin:0 auto;padding:20px;display:flex;flex-direction:col
     <h3 style="margin-bottom:12px">Товары</h3>
     <div class="list" id="list"></div>
   </div>
+  <div class="card">
+    <h3 style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">Заказы <span id="ocount" style="color:#d4af37"></span>
+      <button class="btn ghost" id="oclear" style="padding:6px 12px;font-size:12px">Очистить</button>
+    </h3>
+    <div class="list" id="orders"></div>
+  </div>
 </main>
 <script>
 const file='products.json';
@@ -134,7 +140,32 @@ document.getElementById('list').addEventListener('click',e=>{
   const b=e.target.closest('[data-del]'); if(!b)return;
   products.splice(+b.dataset.del,1); save(); load();
 });
+function renderOrders(){
+  let arr=[];try{arr=JSON.parse(localStorage.getItem('anon_orders')||'[]')}catch(e){}
+  document.getElementById('ocount').textContent=arr.length?'· '+arr.length:'';
+  const box=document.getElementById('orders');
+  if(!arr.length){box.innerHTML='<div style="opacity:.6;font-size:14px">Пока заказов нет. Они появятся здесь, когда кто-то оформит заказ на сайте (на этом устройстве).</div>';return;}
+  box.innerHTML=arr.map(o=>{
+    const d=new Date(o.ts||Date.now());
+    const when=d.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const items=(o.items||[]).map(i=>`${i.name} ×${i.qty}`).join(', ');
+    const type=o.type==='taxi'?'🚕 Такси':'🛍 Магазин';
+    return `<div class="item" style="align-items:flex-start">
+      <div class="info">
+        <div><b>№${o.id}</b> · ${type} · <span style="color:#d4af37">${(o.total||0).toLocaleString('ru-RU')} сум</span></div>
+        <div style="opacity:.8;font-size:13px;margin-top:4px">${items}</div>
+        <div style="opacity:.65;font-size:13px;margin-top:4px">${o.name||'—'} · ${o.phone||'—'}${o.addr?' · '+o.addr:''}</div>
+        <div style="opacity:.45;font-size:12px;margin-top:4px">${when}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+document.getElementById('oclear').onclick=()=>{
+  if(!confirm('Удалить все заказы на этом устройстве?'))return;
+  localStorage.setItem('anon_orders','[]');renderOrders();
+};
 load();
+renderOrders();
 </script>
 </body>
 </html>
