@@ -525,6 +525,23 @@ header{
 
 <script>
 const TG="amirmaxmudov7";
+const TGH='amirmaxmudov7',U_KEY='anon_users',ME_KEY='anon_me';
+const users=()=>{try{return JSON.parse(localStorage.getItem(U_KEY)||'{}')}catch(e){return{}}};
+const saveUsers=u=>localStorage.setItem(U_KEY,JSON.stringify(u));
+const me=()=>localStorage.getItem(ME_KEY)||'';
+const norm=s=>s.trim().replace(/^@/,'').toLowerCase().replace(/[^a-z0-9_]/g,'');
+const myAcc=()=>users()[me()]||null;
+const CLAIM_KEY='anon_claimed';
+let claimOut=null;
+const claimedIds=()=>{try{return JSON.parse(localStorage.getItem(CLAIM_KEY)||'[]')}catch(e){return[]}};
+const encClaim=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const decClaim=s=>{try{return JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/')))))}catch(e){return null}};
+function claimLink(o){return location.origin+location.pathname+'#claim='+encClaim(o);}
+function getClaim(){
+  const m=location.hash.match(/#claim=([^&]+)/);if(!m)return null;
+  const o=decClaim(decodeURIComponent(m[1]));
+  if(!o||!o.to||!o.sum||!o.id)return null;return o;
+}
 const SERVICES=[
   {t:'shop',i:'🛍',n:'Маркет'},
   {t:'taxi',i:'🚕',n:'Такси'},
@@ -657,7 +674,7 @@ function go(tab){
   if(tab==='menu')renderMenu();
 }
 document.querySelectorAll('[data-tab]').forEach(b=>{if(b.tagName==='BUTTON')b.onclick=()=>go(b.dataset.tab)});
-if(location.hash==='#taxi')go('taxi');else if(location.hash==='#games')go('games');else if(location.hash==='#nav')go('nav');else if(location.hash==='#wallet')go('wallet');else if(location.hash==='#menu')go('menu');else if(location.hash==='#account')go('account');else if(location.hash==='#translate')go('translate');else go('menu');
+if(getClaim())go('wallet');else if(location.hash==='#taxi')go('taxi');else if(location.hash==='#games')go('games');else if(location.hash==='#nav')go('nav');else if(location.hash==='#wallet')go('wallet');else if(location.hash==='#menu')go('menu');else if(location.hash==='#account')go('account');else if(location.hash==='#translate')go('translate');else go('menu');
 
 /* ---------- TAXI ---------- */
 const FROM={lat:41.311081,lng:69.240562};
@@ -927,12 +944,6 @@ document.addEventListener('click',e=>{
 });
 
 /* ---------- WALLET / TELEGRAM ---------- */
-const TGH='amirmaxmudov7',U_KEY='anon_users',ME_KEY='anon_me';
-const users=()=>{try{return JSON.parse(localStorage.getItem(U_KEY)||'{}')}catch(e){return{}}};
-const saveUsers=u=>localStorage.setItem(U_KEY,JSON.stringify(u));
-const me=()=>localStorage.getItem(ME_KEY)||'';
-const norm=s=>s.trim().replace(/^@/,'').toLowerCase().replace(/[^a-z0-9_]/g,'');
-const myAcc=()=>users()[me()]||null;
 function updChip(){
   const a=myAcc();const el=document.getElementById('uchip');
   if(a){
@@ -942,31 +953,89 @@ function updChip(){
 }
 document.getElementById('uchip').onclick=()=>go('account');
 document.getElementById('logo').onclick=()=>go('menu');
-function login(v){
+function login(v,silent){
   const u=norm(v);
   if(u.length<3)return alert('Введи ник в Telegram, например @anon');
   const all=users();
   if(!all[u])all[u]={balance:0,hist:[],created:Date.now()};
   saveUsers(all);localStorage.setItem(ME_KEY,u);
-  window.open('https://t.me/'+TGH+'?text='+encodeURIComponent('Вход в ANON: @'+u),'_blank');
+  if(!silent)window.open('https://t.me/'+TGH+'?text='+encodeURIComponent('Вход в ANON: @'+u),'_blank');
   renderWallet();
 }
-function renderWallet(){
-  const w=document.getElementById('wallet');const a=myAcc();updChip();
-  if(!a){
-    w.innerHTML=`<div class="panel">
+function loginCard(prefill){
+  return `<div class="panel">
       <h3>Вход через Telegram</h3>
       <div class="empty">Аккаунт создаётся автоматически. Пароль не нужен — только ник в Telegram.</div>
-      <input id="lgn" placeholder="@твой_ник" autocomplete="username">
+      <input id="lgn" placeholder="@твой_ник" autocomplete="username" value="${prefill?'@'+prefill:''}">
       <button class="tgbtn" id="lgbtn">✈️ Войти через Telegram</button>
       <div class="empty">Ник нужен, чтобы получать переводы от других.</div>
     </div>`;
-    document.getElementById('lgbtn').onclick=()=>login(document.getElementById('lgn').value);
+}
+function claimCard(cl){
+  if(claimedIds().includes(cl.id))
+    return `<div class="panel"><h3>Перевод</h3><div class="empty">Этот перевод уже получен ✓</div></div>`;
+  if(!myAcc())
+    return `<div class="panel"><h3>Тебе перевод 🎁</h3>
+      <div class="empty">@${cl.from} отправил <b>${fmt(cl.sum)} сум</b> на @${cl.to}. Войди под ником @${cl.to}, чтобы получить.</div></div>`;
+  if(me()!==cl.to)
+    return `<div class="panel"><h3>Перевод для @${cl.to}</h3>
+      <div class="empty">Ты вошёл как @${me()}. Получить может только @${cl.to}.</div>
+      <button class="ghostbtn" id="clswitch">Войти как @${cl.to}</button></div>`;
+  return `<div class="panel"><h3>Тебе перевод 🎁</h3>
+    <div class="empty">@${cl.from} отправил <b>${fmt(cl.sum)} сум</b>${cl.cmt?' · '+cl.cmt:''}</div>
+    <button class="tgbtn" id="clget">Получить ${fmt(cl.sum)} сум</button></div>`;
+}
+function wireClaim(cl){
+  const g=document.getElementById('clget');
+  if(g)g.onclick=()=>takeClaim(cl);
+  const s=document.getElementById('clswitch');
+  if(s)s.onclick=()=>{
+    const all=users(),u=norm(cl.to);
+    if(!all[u])all[u]={balance:0,hist:[],created:Date.now()};
+    saveUsers(all);localStorage.setItem(ME_KEY,u);renderWallet();
+  };
+}
+function takeClaim(cl){
+  const u=norm(cl.to),all=users();
+  const r=all[u]||{balance:0,hist:[],created:Date.now()};
+  r.balance=(r.balance||0)+cl.sum;r.hist=r.hist||[];
+  r.hist.push({title:'Перевод от @'+cl.from+(cl.cmt?' · '+cl.cmt:''),sum:cl.sum,ts:Date.now()});
+  all[u]=r;saveUsers(all);
+  const ids=claimedIds();if(!ids.includes(cl.id)){ids.push(cl.id);localStorage.setItem(CLAIM_KEY,JSON.stringify(ids));}
+  try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+  renderWallet();
+  alert('Получено '+fmt(cl.sum)+' сум');
+}
+function renderClaimOut(){
+  const f=document.getElementById('wform');if(!f||!claimOut)return;
+  f.innerHTML=`<h3>Перевод готов ✓</h3>
+    <div class="empty">Отправь ссылку @${claimOut.to}. Он откроет её, войдёт под своим ником — и сумма зачислится.</div>
+    <input id="clink" readonly value="${claimOut.link}">
+    <button class="tgbtn" id="ccopy">Скопировать ссылку</button>
+    <button class="ghostbtn" id="ctg">Отправить в Telegram</button>
+    <div class="empty">${fmt(claimOut.sum)} сум · перевод №${claimOut.id}</div>`;
+  document.getElementById('ccopy').onclick=async()=>{
+    try{await navigator.clipboard.writeText(claimOut.link);}
+    catch(e){const i=document.getElementById('clink');i.select();document.execCommand&&document.execCommand('copy');}
+    document.getElementById('ccopy').textContent='Скопировано ✓';
+    setTimeout(()=>{const b=document.getElementById('ccopy');if(b)b.textContent='Скопировать ссылку';},1500);
+  };
+  document.getElementById('ctg').onclick=()=>{
+    window.open('https://t.me/share/url?url='+encodeURIComponent(claimOut.link)+'&text='+encodeURIComponent('Перевод '+fmt(claimOut.sum)+' сум для @'+claimOut.to),'_blank');
+  };
+}
+function renderWallet(){
+  const w=document.getElementById('wallet');const a=myAcc();updChip();
+  const cl=getClaim();
+  if(!a){
+    w.innerHTML=(cl?claimCard(cl):'')+loginCard(cl?cl.to:'');
+    document.getElementById('lgbtn').onclick=()=>login(document.getElementById('lgn').value,!!cl);
     document.getElementById('lgn').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('lgbtn').click()});
+    if(cl)wireClaim(cl);
     return;
   }
   const hist=(a.hist||[]).slice().reverse();
-  w.innerHTML=`
+  w.innerHTML=(cl?claimCard(cl):'')+`
     <div class="balance">
       <div class="lbl">Баланс</div>
       <div class="val">${fmt(a.balance||0)} сум</div>
@@ -979,17 +1048,19 @@ function renderWallet(){
     <div class="panel" id="wform"></div>
     <div class="panel"><h3>История</h3><div id="whist">${hist.length?hist.map(t=>`<div class="tx"><div class="tinfo"><div>${t.title}</div><div>${new Date(t.ts).toLocaleString('ru-RU')}</div></div><div class="${t.sum<0?'neg':'pos'}">${t.sum>0?'+':''}${fmt(t.sum)} сум</div></div>`).join(''):'<div class="empty">Пока пусто</div>'}</div></div>
     <button class="ghostbtn" id="wout">Выйти из аккаунта</button>`;
+  if(cl)wireClaim(cl);
   document.getElementById('wout').onclick=()=>{localStorage.removeItem(ME_KEY);renderWallet()};
-  document.getElementById('wtop').onclick=formTop;
-  document.getElementById('wsend').onclick=formSend;
-  formSend();
+  document.getElementById('wtop').onclick=()=>{claimOut=null;formTop()};
+  document.getElementById('wsend').onclick=()=>{claimOut=null;formSend()};
+  if(claimOut)renderClaimOut();else formSend();
 }
 function formSend(){
   const f=document.getElementById('wform');if(!f)return;
   f.innerHTML=`<h3>Перевод</h3>
     <input id="to" placeholder="@ник получателя">
     <div class="row2"><input id="amt" type="number" inputmode="numeric" placeholder="Сумма"><input id="cmt" placeholder="Комментарий"></div>
-    <button class="tgbtn" id="snd">Отправить перевод</button>`;
+    <button class="tgbtn" id="snd">Отправить перевод</button>
+    <div class="empty">Если получатель ещё не заходил на сайт с этого устройства — появится ссылка, по которой он получит деньги.</div>`;
   document.getElementById('snd').onclick=doSend;
 }
 function doSend(){
@@ -1004,10 +1075,17 @@ function doSend(){
   a.balance=(a.balance||0)-amt;a.hist=a.hist||[];
   a.hist.push({title:'Перевод @'+to+(cmt?' · '+cmt:''),sum:-amt,ts:Date.now()});
   all[me()]=a;
-  if(all[to]){const r=all[to];r.balance=(r.balance||0)+amt;r.hist=r.hist||[];
-    r.hist.push({title:'Перевод от @'+me()+(cmt?' · '+cmt:''),sum:amt,ts:Date.now()});all[to]=r;}
+  if(all[to]){
+    const r=all[to];r.balance=(r.balance||0)+amt;r.hist=r.hist||[];
+    r.hist.push({title:'Перевод от @'+me()+(cmt?' · '+cmt:''),sum:amt,ts:Date.now()});all[to]=r;
+    saveUsers(all);
+    alert('Перевод отправлен: @'+to+' — '+fmt(amt)+' сум');
+    renderWallet();
+    return;
+  }
   saveUsers(all);
-  alert('Перевод отправлен: @'+to+' — '+fmt(amt)+' сум');
+  const o={id:'P'+Date.now().toString(36).toUpperCase(),to,from:me(),sum:amt,cmt,ts:Date.now()};
+  claimOut={...o,link:claimLink(o)};
   renderWallet();
 }
 function formTop(){
